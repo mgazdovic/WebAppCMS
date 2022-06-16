@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Category>
+
+@{
+    ViewData["Title"] = "Category";
+}
+
+<h1>Category Administration</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+@if (Model.Count() == 0)
+{
+    <div class="row text-muted"> --- No records yet...</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+
+                <th></th>
+
+                <th class="small text-muted align-middle">
+                    @Html.DisplayNameFor(model => model.CreatedAt)
+                </th>
+                <th class="small text-muted align-middle">
+                    @Html.DisplayNameFor(model => model.ModifiedAt)
+                </th>
+                <th class="small text-muted align-middle">
+                    @Html.DisplayNameFor(model => model.ModifiedBy)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="font-weight-bolder">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+
+                    <td class="small text-muted align-middle">
+                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                    </td>
+                    <td class="small text-muted align-middle">
+                        @Html.DisplayFor(modelItem => item.ModifiedAt)
+                    </td>
+                    <td class="small text-muted align-middle">
+                        @Html.DisplayFor(modelItem => item.ModifiedBy.UserName)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+<hr />
+<p>
+    <a asp-controller="Home" asp-action="Index">Back</a>
+</p>
