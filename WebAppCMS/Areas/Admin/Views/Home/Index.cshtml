@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewData["Title"] = "Administration";
+}
+
+<h1 class="text-center">Administration</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-3 text-center">
+
+        <form asp-area="Admin" asp-controller="Product" asp-action="Index">
+            <input type="submit" value="PRODUCT" class="btn-primary font-weight-bold p-2 rounded w-100" />
+        </form>
+
+        <p class="small text-muted">@ViewBag.ProductRecordCount record(s)</p>
+        @if (ViewBag.ProductLastModified != null)
+        {
+            <p class="small text-muted">Last modified <b>@ViewBag.ProductLastModified.ModifiedAt</b><br /> by user <b>@ViewBag.ProductLastModified.ModifiedBy.UserName</b></p>
+        }
+    </div>
+    <div class="col-md-3 text-center">
+
+        <form asp-area="Admin" asp-controller="Category" asp-action="Index">
+            <input type="submit" value="CATEGORY" class="btn-primary font-weight-bold p-2 rounded w-100" />
+        </form>
+
+        <p class="small text-muted">@ViewBag.CategoryRecordCount record(s)</p>
+        @if (ViewBag.CategoryLastModified != null)
+        {
+            <p class="small text-muted">Last modified <b>@ViewBag.CategoryLastModified.ModifiedAt</b><br /> by user <b>@ViewBag.CategoryLastModified.ModifiedBy.UserName</b></p>
+        }
+    </div>
+    <div class="col-md-3 text-center">
+
+        <form asp-area="Admin" asp-controller="Order" asp-action="Index">
+            <input type="submit" value="ORDER" class="btn-primary font-weight-bold p-2 rounded w-100" />
+        </form>
+
+        <p class="small text-muted">@ViewBag.OrderRecordCount record(s)</p>
+        @if (ViewBag.OrderLastModified != null)
+        {
+            <p class="small text-muted">Last modified <b>@ViewBag.OrderLastModified.ModifiedAt</b><br /> by user <b>@ViewBag.OrderLastModified.ModifiedBy.UserName</b></p>
+        }
+    </div>
+    <div class="col-md-3 text-center">
+
+        <form asp-area="Admin" asp-controller="User" asp-action="Index">
+            <input type="submit" value="USER" class="btn-primary font-weight-bold p-2 rounded w-100" />
+        </form>
+
+        <p class="small text-muted">@ViewBag.UserRecordCount record(s)</p>
+    </div>
+</div>
+<hr />
+
+
