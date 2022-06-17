@@ -97,6 +97,11 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            if (product.UnitPrice <= 0)
+            {
+                ModelState.AddModelError("UnitPrice", "Price must be greater than 0.");
+            }
+
             if (ModelState.IsValid)
             {
                 product.ModifiedAt = DateTime.Now;
