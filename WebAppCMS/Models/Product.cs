@@ -28,7 +28,7 @@ namespace WebAppCMS.Models
 
         [Required]
         [Column(TypeName = "decimal(9,2)")]
-        [Display(Name = "Unit Price")]
+        [Display(Name = "Price")]
         public decimal UnitPrice { get; set; }
 
         [Display(Name = "Created")]
