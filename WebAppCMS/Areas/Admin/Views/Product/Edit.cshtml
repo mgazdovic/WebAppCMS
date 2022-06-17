@@ -20,11 +20,18 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
+                <label class="control-label">Select Category</label>
                 <select name="CategoryId" class="form-control">
                     @foreach (var item in (List<SelectListItem>)ViewBag.Categories)
                     {
-                        <option value="@item.Value">@item.Text</option>
+                        if (int.Parse(item.Value) == Model.CategoryId)
+                        {
+                            <option value="@item.Value" selected>@item.Text</option>
+                        }
+                        else
+                        { 
+                            <option value="@item.Value">@item.Text</option>
+                        }
                     }
                 </select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>

@@ -26,20 +26,11 @@ namespace WebAppCMS.Areas.Admin.Controllers
         // GET: Admin/Product
         public async Task<IActionResult> Index(int? categoryId)
         {
-            var products = (from prod in _context.Product.Include(p => p.ModifiedBy)
-                            where categoryId == null || prod.CategoryId == categoryId
-                                select new Product
-                                    {
-                                        Id = prod.Id,
-                                        CategoryId = prod.CategoryId,
-                                        CategoryName = (from cat in _context.Category where cat.Id == prod.CategoryId select cat.Name).FirstOrDefault(),
-                                        Name = prod.Name,
-                                        Description = prod.Description,
-                                        UnitPrice = prod.UnitPrice,
-                                        CreatedAt = prod.CreatedAt,
-                                        ModifiedAt = prod.ModifiedAt,
-                                        ModifiedBy = prod.ModifiedBy
-                                    });
+            var products = _context.Product.Include(p => p.ModifiedBy).Where(p => categoryId == null || p.CategoryId == categoryId);
+            foreach (var product in products)
+            {
+                IncludeCategoryFields(product);
+            }
 
             ViewBag.CategoryId = categoryId;
             ViewBag.Categories = GetCategorySelectList();
@@ -88,6 +79,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             }
 
             ViewBag.Categories = GetCategorySelectList();
+            IncludeCategoryFields(product);
             return View(product);
         }
 
@@ -123,6 +115,8 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            IncludeCategoryFields(product);
             return View(product);
         }
 
@@ -142,6 +136,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            IncludeCategoryFields(product);
             return View(product);
         }
 
@@ -174,6 +169,12 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 ).ToList();
 
             return categories;
+        }
+
+        private void IncludeCategoryFields(Product product)
+        {
+            var category = _context.Category.FirstOrDefault(c => c.Id == product.CategoryId);
+            product.CategoryName = category.Name;
         }
     }
 }
