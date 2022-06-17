@@ -26,7 +26,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         // GET: Admin/Category
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.Include(c => c.ModifiedBy).ToListAsync());
+            return View(await _context.Category.Include(c => c.ModifiedBy).OrderBy(c => c.Name).ToListAsync());
         }
 
         // GET: Admin/Category/Create

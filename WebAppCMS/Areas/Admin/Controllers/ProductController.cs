@@ -34,7 +34,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             ViewBag.CategoryId = categoryId;
             ViewBag.Categories = GetCategorySelectList();
-            return View(await products.ToListAsync());
+            return View(await products.OrderBy(p => p.Name).ToListAsync());
         }
 
         // GET: Admin/Product/Create
