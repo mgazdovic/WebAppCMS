@@ -49,6 +49,11 @@ namespace WebAppCMS.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,UnitPrice,CategoryId")] Product product)
         {
+            if(product.UnitPrice <= 0)
+            {
+                ModelState.AddModelError("UnitPrice", "Price must be greater than 0.");
+            }
+            
             if (ModelState.IsValid)
             {
                 product.CreatedAt = DateTime.Now;
