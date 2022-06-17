@@ -126,6 +126,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewBag.Categories = GetCategorySelectList();
             IncludeCategoryFields(product);
             return View(product);
         }
