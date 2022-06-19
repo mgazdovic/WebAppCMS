@@ -44,6 +44,9 @@ else
         <thead>
             <tr>
                 <th>
+                    @Html.DisplayNameFor(model => model.IsAvailable)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Name)
                 </th>
                 <th>
@@ -55,7 +58,7 @@ else
                 <th>
                     @Html.DisplayNameFor(model => model.UnitPrice)
                 </th>
-
+                
                 <th></th>
 
                 <th class="small text-muted align-middle">
@@ -72,35 +75,38 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CategoryName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UnitPrice)
-                    </td>
+            <tr>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.IsAvailable)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitPrice)
+                </td>
 
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
 
-                    <td class="small text-muted align-middle">
-                        @Html.DisplayFor(modelItem => item.CreatedAt)
-                    </td>
-                    <td class="small text-muted align-middle">
-                        @Html.DisplayFor(modelItem => item.ModifiedAt)
-                    </td>
-                    <td class="small text-muted align-middle">
-                        @Html.DisplayFor(modelItem => item.ModifiedBy.UserName)
-                    </td>
-                </tr>
+                <td class="small text-muted align-middle">
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td class="small text-muted align-middle">
+                    @Html.DisplayFor(modelItem => item.ModifiedAt)
+                </td>
+                <td class="small text-muted align-middle">
+                    @Html.DisplayFor(modelItem => item.ModifiedBy.UserName)
+                </td>
+            </tr>
             }
         </tbody>
     </table>

@@ -56,6 +56,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             
             if (ModelState.IsValid)
             {
+                product.IsAvailable = true;
                 product.CreatedAt = DateTime.Now;
                 product.ModifiedAt = DateTime.Now;
                 product.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
@@ -90,7 +91,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Product/Edit/5
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,UnitPrice,CategoryId,CreatedAt")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,UnitPrice,CategoryId,IsAvailable,CreatedAt")] Product product)
         {
             if (id != product.Id)
             {

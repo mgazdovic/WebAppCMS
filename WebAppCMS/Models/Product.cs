@@ -31,6 +31,11 @@ namespace WebAppCMS.Models
         [Display(Name = "Price")]
         public decimal UnitPrice { get; set; }
 
+        [Display(Name = "Available")]
+        public bool IsAvailable { get; set; }
+
+        public List<OrderItem> OrderItems { get; set; }
+
         [Display(Name = "Created")]
         public DateTime CreatedAt { get; set; }
 
