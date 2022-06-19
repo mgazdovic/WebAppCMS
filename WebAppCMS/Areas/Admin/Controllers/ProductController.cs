@@ -141,6 +141,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             var product = await _context.Product
                 .Include(p => p.ModifiedBy)
+                .Include(p => p.OrderItems)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
