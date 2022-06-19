@@ -113,6 +113,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             var category = await _context.Category
                 .Include(c => c.ModifiedBy)
+                .Include(c => c.Products)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
