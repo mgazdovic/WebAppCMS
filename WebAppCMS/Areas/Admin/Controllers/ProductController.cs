@@ -26,7 +26,10 @@ namespace WebAppCMS.Areas.Admin.Controllers
         // GET: Admin/Product
         public async Task<IActionResult> Index(int? categoryId)
         {
-            var products = _context.Product.Include(p => p.ModifiedBy).Where(p => categoryId == null || p.CategoryId == categoryId);
+            var products = await _context.Product.Include(p => p.ModifiedBy)
+                .Where(p => categoryId == null || p.CategoryId == categoryId)
+                .OrderBy(p => p.Name)
+                .ToListAsync();
             foreach (var product in products)
             {
                 await IncludeCategoryFields(product);
@@ -34,7 +37,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             ViewBag.CategoryId = categoryId;
             ViewBag.Categories = await GetCategorySelectList();
-            return View(await products.OrderBy(p => p.Name).ToListAsync());
+            return View(products);
         }
 
         // GET: Admin/Product/Create
