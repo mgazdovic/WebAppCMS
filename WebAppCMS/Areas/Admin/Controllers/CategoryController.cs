@@ -43,7 +43,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             {
                 category.CreatedAt = DateTime.Now;
                 category.ModifiedAt = DateTime.Now;
-                category.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
+                category.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
 
                 _context.Add(category);
                 await _context.SaveChangesAsync();
@@ -80,7 +80,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 category.ModifiedAt = DateTime.Now;
-                category.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
+                category.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
 
                 try
                 {
