@@ -20,22 +20,22 @@ namespace WebAppCMS.Areas.Admin.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             // Product
-            ViewBag.ProductRecordCount = _context.Product.Count();
-            ViewBag.ProductLastModified = _context.Product.Include(p => p.ModifiedBy).OrderByDescending(p => p.ModifiedAt).FirstOrDefault();
+            ViewBag.ProductRecordCount = await _context.Product.CountAsync();
+            ViewBag.ProductLastModified = await _context.Product.Include(p => p.ModifiedBy).OrderByDescending(p => p.ModifiedAt).FirstOrDefaultAsync();
 
             // Category 
-            ViewBag.CategoryRecordCount = _context.Category.Count();
-            ViewBag.CategoryLastModified = _context.Category.Include(c => c.ModifiedBy).OrderByDescending(c => c.ModifiedAt).FirstOrDefault();
+            ViewBag.CategoryRecordCount = await _context.Category.CountAsync();
+            ViewBag.CategoryLastModified = await _context.Category.Include(c => c.ModifiedBy).OrderByDescending(c => c.ModifiedAt).FirstOrDefaultAsync();
 
-            //// Order
-            //ViewBag.OrderRecordCount = _context.Order.Count();
-            //ViewBag.OrderLastModified = _context.Order.Include(o => o.ModifiedBy).OrderByDescending(o => o.ModifiedAt).FirstOrDefault();
+            // Order
+            ViewBag.OrderRecordCount = await _context.Order.CountAsync();
+            ViewBag.OrderLastModified = await _context.Order.Include(o => o.ModifiedBy).OrderByDescending(o => o.ModifiedAt).FirstOrDefaultAsync();
 
             // User
-            ViewBag.UserRecordCount = _context.Users.Count();
+            ViewBag.UserRecordCount = await _context.Users.CountAsync();
 
             return View();
         }
