@@ -15,6 +15,13 @@
 }
 else
 {
+    @if (TempData["Message"] != null)
+    { 
+        <div class="row alert-success p-md-2">
+            @TempData["Message"]
+        </div>
+    }
+    
     <table class="table">
         <thead>
             <tr>

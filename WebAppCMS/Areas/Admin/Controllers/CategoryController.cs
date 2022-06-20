@@ -41,12 +41,21 @@ namespace WebAppCMS.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                category.CreatedAt = DateTime.Now;
-                category.ModifiedAt = DateTime.Now;
-                category.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
+                var existingCategory = await _context.Category.FirstOrDefaultAsync(c => c.Name == category.Name);
+                if (existingCategory != null)
+                {
+                    TempData["Message"] = "Category already exists!";
+                }
+                else
+                {
+                    category.CreatedAt = DateTime.Now;
+                    category.ModifiedAt = DateTime.Now;
+                    category.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
 
-                _context.Add(category);
-                await _context.SaveChangesAsync();
+                    _context.Add(category);
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
