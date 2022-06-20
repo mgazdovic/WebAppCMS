@@ -29,18 +29,18 @@ namespace WebAppCMS.Areas.Admin.Controllers
             var products = _context.Product.Include(p => p.ModifiedBy).Where(p => categoryId == null || p.CategoryId == categoryId);
             foreach (var product in products)
             {
-                IncludeCategoryFields(product);
+                await IncludeCategoryFields(product);
             }
 
             ViewBag.CategoryId = categoryId;
-            ViewBag.Categories = GetCategorySelectList();
+            ViewBag.Categories = await GetCategorySelectList();
             return View(await products.OrderBy(p => p.Name).ToListAsync());
         }
 
         // GET: Admin/Product/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Categories = GetCategorySelectList();
+            ViewBag.Categories = await GetCategorySelectList();
             
             return View();
         }
@@ -59,14 +59,14 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 product.IsAvailable = true;
                 product.CreatedAt = DateTime.Now;
                 product.ModifiedAt = DateTime.Now;
-                product.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
+                product.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
 
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Categories = GetCategorySelectList();
+            ViewBag.Categories = await GetCategorySelectList();
             return View(product);
         }
 
@@ -84,8 +84,8 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            ViewBag.Categories = GetCategorySelectList();
-            IncludeCategoryFields(product);
+            ViewBag.Categories = await GetCategorySelectList();
+            await IncludeCategoryFields(product);
             return View(product);
         }
 
@@ -106,7 +106,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 product.ModifiedAt = DateTime.Now;
-                product.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
+                product.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
 
                 try
                 {
@@ -127,8 +127,8 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Categories = GetCategorySelectList();
-            IncludeCategoryFields(product);
+            ViewBag.Categories = await GetCategorySelectList();
+            await IncludeCategoryFields(product);
             return View(product);
         }
 
@@ -149,7 +149,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            IncludeCategoryFields(product);
+            await IncludeCategoryFields(product);
             return View(product);
         }
 
@@ -173,20 +173,20 @@ namespace WebAppCMS.Areas.Admin.Controllers
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value.ToString();
         }
 
-        private List<SelectListItem> GetCategorySelectList()
+        private async Task<List<SelectListItem>> GetCategorySelectList()
         {
             var categories = _context.Category
                 .Select
                 (
                     item => new SelectListItem() { Text = item.Name, Value = item.Id.ToString() }
-                ).ToList();
+                ).ToListAsync();
 
-            return categories;
+            return await categories;
         }
 
-        private void IncludeCategoryFields(Product product)
+        private async Task IncludeCategoryFields(Product product)
         {
-            var category = _context.Category.FirstOrDefault(c => c.Id == product.CategoryId);
+            var category = await _context.Category.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
             product.CategoryName = category.Name;
         }
     }
