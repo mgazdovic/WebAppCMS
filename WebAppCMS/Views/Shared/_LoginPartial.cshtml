@@ -5,7 +5,7 @@
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    @if (User.IsInRole("Admin"))
+    @if (User.IsInRole("Admin") || User.IsInRole("Supervisor"))
     {
         <li class="nav-item">
             <a class="nav-link text-dark font-weight-bolder bg-light align-middle" asp-area="Admin" asp-controller="Home" asp-action="Index">Administration</a>
