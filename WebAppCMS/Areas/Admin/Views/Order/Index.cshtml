@@ -1,0 +1,92 @@
+﻿@model IEnumerable<Order>
+
+@{
+    ViewData["Title"] = "Order";
+}
+
+<h1>Order Administration</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@if (Model.Count() == 0)
+{
+    <div class="row text-muted"> --- No records yet...</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.State)
+                </th>
+                <th>
+                    Total
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>
+
+                <th></th>
+
+                <th class="small text-muted align-middle">
+                    @Html.DisplayNameFor(model => model.CreatedAt)
+                </th>
+                <th class="small text-muted align-middle">
+                    @Html.DisplayNameFor(model => model.ModifiedAt)
+                </th>
+                <th class="small text-muted align-middle">
+                    @Html.DisplayNameFor(model => model.ModifiedBy)
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.State)
+                </td>
+                <td>
+                    @item.GetTotal().ToString("0.00")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Product Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+
+                <td class="small text-muted align-middle">
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td class="small text-muted align-middle">
+                    @Html.DisplayFor(modelItem => item.ModifiedAt)
+                </td>
+                <td class="small text-muted align-middle">
+                    @Html.DisplayFor(modelItem => item.ModifiedBy.UserName)
+                </td>
+
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+<hr />
+<p>
+    <a asp-controller="Home" asp-action="Index">Back</a>
+</p>

@@ -1,0 +1,197 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Product Details</h1>
+
+<div>
+    <h4>Order #@Model.Id</h4>
+    <hr />
+
+    <p>
+        <a asp-action="AddItem" asp-route-orderId="@Model.Id">Add Product</a>
+    </p>
+
+    @if (Model.OrderItems == null || Model.OrderItems.Count == 0)
+    {
+        <span class="text-muted">Order does not contain any products...</span>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.OrderItems.First().ProductName)
+                    </th>
+
+                    <th class="bg-light">
+                        @Html.DisplayNameFor(model => model.OrderItems.First().Quantity)
+                    </th>
+                    <th class="bg-light"></th>
+                    <th class="bg-light"></th>
+
+                    <th>
+                        @Html.DisplayNameFor(model => model.OrderItems.First().ProductUnitPrice)
+                    </th>
+
+                    <th>
+                        Total
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderItems)
+                {
+                    <tr>
+                        <td>
+                            @item.ProductName
+                        </td>
+                        <td>
+                            @item.Quantity
+                        </td>
+                        <td>
+                            <form asp-action="AddOne" asp-route-id="@item.Id">
+                                <input type="submit" value="+1" class="btn btn-primary w-auto" />
+                            </form>
+                        </td>
+                        <td>
+                            <form asp-action="RemoveOne" asp-route-id="@item.Id">
+                                <input type="submit" value="-1" class="btn btn-warning w-auto" />
+                            </form>
+                        </td>
+                        <td>
+                            @item.ProductUnitPrice.ToString("0.00")
+                        </td>
+                        <td>
+                            @item.GetTotal().ToString("0.00")
+                        </td>
+                        <td>
+                            <a class="btn btn-danger w-auto" asp-action="DeleteItem" asp-route-id="@item.Id">Remove</a>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td class="bg-info font-weight-bolder">Products Total</td>
+                    <td class="bg-info"></td>
+                    <td class="bg-info"></td>
+                    <td class="bg-info"></td>
+                    <td class="bg-info"></td>
+                    <td class="bg-info">@Model.GetItemsTotal().ToString("0.00")</td>
+                    <td class="bg-info"></td>
+                </tr>
+                @if (@Model.DeliveryFee > 0)
+                {
+                <tr>
+                    <td class="font-weight-bolder">@Html.DisplayNameFor(model => model.DeliveryFee)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>@Html.DisplayFor(model => model.DeliveryFee)</td>
+                    <td><a class="btn btn-primary w-auto" asp-action="Edit" asp-route-id="@Model.Id">Edit</a></td>
+                </tr>
+                }
+                @if (@Model.PercentDiscount > 0)
+                {
+                <tr>
+                    <td class="font-weight-bolder">@Html.DisplayNameFor(model => model.PercentDiscount)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>@Model.GetDiscountAbsolute().ToString("0.00") (@Model.PercentDiscount %)</td>
+                    <td><a class="btn btn-primary w-auto" asp-action="Edit" asp-route-id="@Model.Id">Edit</a></td>
+                </tr>
+                }
+                @if (@Model.PercentTax > 0)
+                {
+                <tr>
+                    <td class="font-weight-bolder">@Html.DisplayNameFor(model => model.PercentTax)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>@Model.GetTaxAbsolute().ToString("0.00") (@Model.PercentTax %)</td>
+                    <td><a class="btn btn-primary w-auto" asp-action="Edit" asp-route-id="@Model.Id">Edit</a></td>
+                </tr>
+                }
+                <tr>
+                    <td class="bg-success font-weight-bolder">Order Total</td>
+                    <td class="bg-success"></td>
+                    <td class="bg-success"></td>
+                    <td class="bg-success"></td>
+                    <td class="bg-success"></td>
+                    <td class="bg-success font-weight-bolder">@Model.GetTotal().ToString("0.00")</td>
+                    <td class="bg-success"></td>
+                </tr>
+
+            </tbody>
+        </table>
+    }
+
+    <hr />
+</div>
+
+<dl class="row">
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.State)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.State)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.DeliveryFirstName)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.DeliveryFirstName)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.DeliveryLastName)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.DeliveryLastName)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.DeliveryFullAddress)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.DeliveryFullAddress)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Message)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Message)
+    </dd>
+    <dt class="col-sm-2 text-muted">
+        @Html.DisplayNameFor(model => model.CreatedAt)
+    </dt>
+    <dd class="col-sm-10 text-muted">
+        @Html.DisplayFor(model => model.CreatedAt)
+    </dd>
+    <dt class="col-sm-2 text-muted">
+        @Html.DisplayNameFor(model => model.ModifiedAt)
+    </dt>
+    <dd class="col-sm-10 text-muted">
+        @Html.DisplayFor(model => model.ModifiedAt)
+    </dd>
+    <dt class="col-sm-2 text-muted">
+        @Html.DisplayNameFor(model => model.ModifiedBy)
+    </dt>
+    <dd class="col-sm-10 text-muted">
+        @Html.DisplayFor(model => model.ModifiedBy.UserName)
+    </dd>
+</dl>
+
+<hr />
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
