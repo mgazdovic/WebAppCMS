@@ -26,19 +26,19 @@ namespace WebAppCMS.Areas.Admin.Controllers
         // GET: Admin/Order
         public async Task<IActionResult> Index()
         {
-            var orders = _context.Order.Include(o => o.OrderItems).Include(o => o.ModifiedBy);
+            var orders = await _context.Order.Include(o => o.OrderItems).Include(o => o.ModifiedBy).OrderBy(o => o.Id).ToListAsync();
 
             foreach (var order in orders)
             {
-                IncludeUserFields(order);
+                await IncludeUserFields(order);
 
                 foreach (var item in order.OrderItems)
                 {
-                    IncludeProductFields(item);
+                    await IncludeProductFields(item);
                 }
             }
 
-            return View(await orders.OrderBy(o => o.Id).ToListAsync());
+            return View(orders);
         }
 
         // GET: Admin/Order/Details/5
@@ -58,17 +58,17 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             foreach (var item in order.OrderItems)
             {
-                IncludeProductFields(item);
+                await IncludeProductFields(item);
             }
 
-            IncludeUserFields(order);
+            await IncludeUserFields(order);
             return View(order);
         }
 
         // GET: Admin/Order/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Users = GetUserSelectList();
+            ViewBag.Users = await GetUserSelectList();
 
             return View();
         }
@@ -82,14 +82,14 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 order.State = Order.OrderState.New;
                 order.CreatedAt = DateTime.Now;
                 order.ModifiedAt = DateTime.Now;
-                order.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
+                order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
 
                 _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Users = GetUserSelectList();
+            ViewBag.Users = await GetUserSelectList();
             return View(order);
         }
 
@@ -108,8 +108,8 @@ namespace WebAppCMS.Areas.Admin.Controllers
             }
 
             ViewBag.States = GetOrderStateSelectList();
-            ViewBag.Users = GetUserSelectList();
-            IncludeUserFields(order);
+            ViewBag.Users = await GetUserSelectList ();
+            await IncludeUserFields(order);
             return View(order);
         }
 
@@ -142,7 +142,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 order.ModifiedAt = DateTime.Now;
-                order.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
+                order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
 
                 try
                 {
@@ -164,8 +164,8 @@ namespace WebAppCMS.Areas.Admin.Controllers
             }
 
             ViewBag.States = GetOrderStateSelectList();
-            ViewBag.Users = GetUserSelectList();
-            IncludeUserFields(order);
+            ViewBag.Users = await GetUserSelectList ();
+            await IncludeUserFields(order);
             return View(order);
         }
 
@@ -188,10 +188,10 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             foreach (var item in order.OrderItems)
             {
-                IncludeProductFields(item);
+                await IncludeProductFields(item);
             }
 
-            IncludeUserFields(order);
+            await IncludeUserFields(order);
             return View(order);
         }
 
@@ -199,7 +199,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = _context.Order.Include(o => o.OrderItems).FirstOrDefault(o => o.Id == id);
+            var order = await _context.Order.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.Id == id);
             foreach (var item in order.OrderItems)
             {
                 _context.OrderItem.Remove(item);
@@ -213,9 +213,9 @@ namespace WebAppCMS.Areas.Admin.Controllers
         #region OrderItem
         // GET
         [Route("Admin/Order/{orderId}/AddItem")]
-        public IActionResult AddItem(int orderId)
+        public async Task<IActionResult> AddItem(int orderId)
         {
-            ViewBag.Products = GetProductSelectList();
+            ViewBag.Products = await GetProductSelectList();
             ViewBag.OrderId = orderId;
 
             return View();
@@ -245,7 +245,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
                     // New product
                     orderItem.CreatedAt = timestamp;
                     orderItem.ModifiedAt = timestamp;
-                    orderItem.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == userId);
+                    orderItem.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
                     _context.Add(orderItem);
                 }
                 else
@@ -254,21 +254,21 @@ namespace WebAppCMS.Areas.Admin.Controllers
                     var newQuantity = existingOrderItem.Quantity + orderItem.Quantity;
                     existingOrderItem.Quantity = newQuantity;
                     existingOrderItem.ModifiedAt = timestamp;
-                    existingOrderItem.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == userId);
+                    existingOrderItem.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
                     _context.Update(existingOrderItem);
                 }
 
                 // Order
                 var order = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderId);
                 order.ModifiedAt = timestamp;
-                order.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == userId);
+                order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
                 _context.Update(order);
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Details), new { id = orderId });
             }
 
-            ViewBag.Products = GetProductSelectList();
+            ViewBag.Products = await GetProductSelectList();
             ViewBag.OrderId = orderId;
 
             return View(orderItem);
@@ -290,7 +290,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            IncludeProductFields(orderItem);
+            await IncludeProductFields(orderItem);
 
             return View(orderItem);
         }
@@ -307,7 +307,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             // Update Order Modified fields
             var order = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderItem.OrderId);
             order.ModifiedAt = DateTime.Now;
-            order.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
+            order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
             _context.Update(order);
 
             await _context.SaveChangesAsync();
@@ -327,7 +327,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             // Update Order Modified fields
             var order = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderItem.OrderId);
             order.ModifiedAt = DateTime.Now;
-            order.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
+            order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
             _context.Update(order);
 
             await _context.SaveChangesAsync();
@@ -356,7 +356,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             // Update Order Modified fields
             var order = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderItem.OrderId);
             order.ModifiedAt = DateTime.Now;
-            order.ModifiedBy = _context.Users.FirstOrDefault(u => u.Id == GetCurrentUserId());
+            order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
             _context.Update(order);
 
             await _context.SaveChangesAsync();
@@ -375,13 +375,13 @@ namespace WebAppCMS.Areas.Admin.Controllers
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value.ToString();
         }
 
-        private List<SelectListItem> GetUserSelectList()
+        private async Task<List<SelectListItem>> GetUserSelectList()
         {
-            var users = _context.Users
+            var users = await _context.Users
                 .Select
                 (
                     item => new SelectListItem() { Text = item.UserName, Value = item.Id.ToString() }
-                ).ToList();
+                ).ToListAsync();
 
             return users;
         }
@@ -397,26 +397,26 @@ namespace WebAppCMS.Areas.Admin.Controllers
             return states;
         }
 
-        private List<SelectListItem> GetProductSelectList()
+        private async Task<List<SelectListItem>> GetProductSelectList()
         {
-            var products = _context.Product
+            var products = await _context.Product
                 .Select
                 (
                     item => new SelectListItem() { Text = $"{item.Name} (Price: {item.UnitPrice})", Value = item.Id.ToString() }
-                ).ToList();
+                ).ToListAsync();
 
             return products;
         }
 
-        private void IncludeUserFields(Order order)
+        private async Task IncludeUserFields(Order order)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Id == order.UserId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == order.UserId);
             order.UserName = user.UserName;
         }
 
-        private void IncludeProductFields(OrderItem orderItem)
+        private async Task IncludeProductFields(OrderItem orderItem)
         {
-            var product = _context.Product.FirstOrDefault(p => p.Id == orderItem.ProductId);
+            var product = await _context.Product.FirstOrDefaultAsync(p => p.Id == orderItem.ProductId);
             orderItem.ProductName = product.Name;
             orderItem.ProductUnitPrice = product.UnitPrice;
         }
