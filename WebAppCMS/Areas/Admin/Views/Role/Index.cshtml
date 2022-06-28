@@ -1,0 +1,58 @@
+﻿@model List<IdentityRole>
+@{
+    ViewData["Title"] = "User Role";
+}
+
+<h1>Role Administration</h1>
+
+<hr />
+<a asp-controller="User" asp-action="Index" class="btn btn-primary">User Administration</a>
+|
+<a asp-controller="UserRoles" asp-action="Index" class="btn btn-primary">User Role Overview</a>
+<hr />
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <p class="text-danger p-1">@TempData["ErrorMessage"]</p>
+}
+
+<form method="post" asp-action="AddRole" asp-controller="Role">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input name="roleName" class="form-control w-25" />
+                <span class="input-group-btn pl-lg-3 pb-lg-3">
+                    <button class="btn btn-outline-success">Create Role</button>
+                </span>
+            </div>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    <form method="post" asp-action="DeleteRole" asp-controller="Role" asp-route-roleName="@item.Name">
+                        <input type="submit" value="Delete" class="btn btn-danger w-auto" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+<hr />
+<p>
+    <a asp-controller="User" asp-action="Index">Back</a>
+</p>

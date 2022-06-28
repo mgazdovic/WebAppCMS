@@ -1,0 +1,55 @@
+﻿@model AppUserViewModel
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<h1>Create</h1>
+
+<h4>User</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <input asp-for="UserName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="RepeatedPassword" class="control-label"></label>
+                <input asp-for="RepeatedPassword" class="form-control" />
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+                <label asp-for="Avatar" class="control-label">Upload Avatar</label>
+                <input asp-for="Avatar" class="form-control-file" accept="image/*" />
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

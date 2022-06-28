@@ -1,0 +1,73 @@
+﻿@model IEnumerable<AppUser>
+
+@{
+    ViewData["Title"] = "User";
+}
+
+<h1>User Administration</h1>
+<hr />
+<a asp-action="Create">Create User</a>
+<hr />
+<a asp-controller="Role" asp-action="Index" class="btn btn-primary">Role Administration</a>
+|
+<a asp-controller="UserRoles" asp-action="Index" class="btn btn-primary">User Role Overview</a>
+<hr />
+
+@if (Model.Count() == 0)
+{
+    <div class="row text-muted"> --- No records yet...</div>
+}
+else
+{
+    <h3>User Overview</h3>
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th></th>
+                <th class="small text-muted align-middle">
+                    @Html.DisplayNameFor(model => model.CreatedAt)
+                </th>
+                <th class="small text-muted align-middle">
+                    @Html.DisplayNameFor(model => model.ModifiedAt)
+                </th>
+                <th class="small text-muted align-middle">
+                    @Html.DisplayNameFor(model => model.ModifiedBy)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>
+                        <a asp-action="EditDetails" asp-route-id="@user.Id">Edit Details</a>
+                        |
+                        <a asp-action="ChangePassword" asp-route-id="@user.Id">Change Password</a>
+                        |
+                        <a asp-controller="UserRoles" asp-action="ConfigureRolesForUser" asp-route-id="@user.Id">Change Role</a>
+                        |
+                        <a asp-action="Delete" asp-route-id="@user.Id">Delete</a>
+                    </td>
+                    <td class="small text-muted align-middle">
+                        @Html.DisplayFor(modelItem => user.CreatedAt)
+                    </td>
+                    <td class="small text-muted align-middle">
+                        @Html.DisplayFor(modelItem => user.ModifiedAt)
+                    </td>
+                    <td class="small text-muted align-middle">
+                        @Html.DisplayFor(modelItem => user.ModifiedBy.UserName)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+<hr />
+<p>
+    <a asp-controller="Home" asp-action="Index">Back</a>
+</p>

@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppCMS.Data;
+using WebAppCMS.Data.Interfaces;
+using WebAppCMS.Data.Models;
+using WebAppCMS.Data.Repositories;
 
 namespace WebAppCMS
 {
@@ -27,15 +30,19 @@ namespace WebAppCMS
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+
+            services.AddScoped<ICMSRepository, CMSRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
