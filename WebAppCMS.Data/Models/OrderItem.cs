@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebAppCMS.Models
+namespace WebAppCMS.Data.Models
 {
     public class OrderItem
     {
@@ -32,7 +32,7 @@ namespace WebAppCMS.Models
         public DateTime ModifiedAt { get; set; }
 
         [Display(Name = "Modified By")]
-        public IdentityUser ModifiedBy { get; set; }
+        public AppUser ModifiedBy { get; set; }
 
         public decimal GetTotal()
         {

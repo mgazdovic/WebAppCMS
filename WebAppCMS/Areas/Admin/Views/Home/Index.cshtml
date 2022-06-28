@@ -50,6 +50,10 @@
         </form>
 
         <p class="small text-muted">@ViewBag.UserRecordCount record(s)</p>
+        @if (ViewBag.UserLastModified != null)
+        {
+            <p class="small text-muted">Last modified <b>@ViewBag.UserLastModified.ModifiedAt</b><br /> by user <b>@ViewBag.UserLastModified.ModifiedBy.UserName</b></p>
+        }
     </div>
 </div>
 <hr />

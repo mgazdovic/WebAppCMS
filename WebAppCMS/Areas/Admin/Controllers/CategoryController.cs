@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebAppCMS.Data;
-using WebAppCMS.Models;
+using WebAppCMS.Data.Interfaces;
+using WebAppCMS.Data.Models;
 
 namespace WebAppCMS.Areas.Admin.Controllers
 {
@@ -16,17 +16,17 @@ namespace WebAppCMS.Areas.Admin.Controllers
     [Authorize(Roles = "Admin,Supervisor")]
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICMSRepository _repo;
 
-        public CategoryController(ApplicationDbContext context)
+        public CategoryController(ICMSRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: Admin/Category
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.Include(c => c.ModifiedBy).OrderBy(c => c.Name).ToListAsync());
+            return View(await _repo.GetAllCategoriesAsync());
         }
 
         // GET: Admin/Category/Create
@@ -41,19 +41,17 @@ namespace WebAppCMS.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingCategory = await _context.Category.FirstOrDefaultAsync(c => c.Name == category.Name);
+                var categories = await _repo.GetAllCategoriesAsync();
+                var existingCategory = categories.FirstOrDefault(c => c.Name == category.Name);
                 if (existingCategory != null)
                 {
                     TempData["Message"] = "Category already exists!";
                 }
                 else
                 {
-                    category.CreatedAt = DateTime.Now;
-                    category.ModifiedAt = DateTime.Now;
-                    category.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
+                    category.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
-                    _context.Add(category);
-                    await _context.SaveChangesAsync();
+                    await _repo.InsertCategoryAsync(category);
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -62,14 +60,16 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         // GET: Admin/Category/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var category = await _context.Category.FindAsync(id);
+            int categoryId = id.Value;
+
+            var category = await _repo.GetCategoryByIdAsync(categoryId);
             if (category == null)
             {
                 return NotFound();
@@ -86,19 +86,25 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            var categories = await _repo.GetAllCategoriesAsync();
+            var existingCategory = categories.FirstOrDefault(c => c.Name == category.Name);
+            if (existingCategory != null)
+            {
+                ModelState.AddModelError("Name", "Category already exists! Please choose a different name.");
+            }
+
             if (ModelState.IsValid)
             {
-                category.ModifiedAt = DateTime.Now;
-                category.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
+                category.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
                 try
                 {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
+                    await _repo.UpdateCategoryAsync(category);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    var exists = await CategoryExists(category.Id);
+                    if (!exists)
                     {
                         return NotFound();
                     }
@@ -120,10 +126,10 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
-                .Include(c => c.ModifiedBy)
-                .Include(c => c.Products)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int categoryId = id.Value;
+
+            var category = await _repo.GetCategoryByIdAsync(categoryId);
+                
             if (category == null)
             {
                 return NotFound();
@@ -136,19 +142,18 @@ namespace WebAppCMS.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Category.FindAsync(id);
-            _context.Category.Remove(category);
-            await _context.SaveChangesAsync();
+            await _repo.DeleteCategoryAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private async Task<bool> CategoryExists(int id)
         {
-            return _context.Category.Any(e => e.Id == id);
+            var existingCategory = await _repo.GetCategoryByIdAsync(id);
+            return existingCategory != null;
         }
 
         private string GetCurrentUserId()
-        { 
+        {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value.ToString();
         }
     }

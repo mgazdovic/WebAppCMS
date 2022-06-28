@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppCMS.Data;
-using WebAppCMS.Models;
+using WebAppCMS.Data.Interfaces;
+using WebAppCMS.Data.Models;
 
 namespace WebAppCMS.Areas.Admin.Controllers
 {
@@ -16,27 +17,17 @@ namespace WebAppCMS.Areas.Admin.Controllers
     [Authorize(Roles = "Admin,Supervisor")]
     public class OrderController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICMSRepository _repo;
 
-        public OrderController(ApplicationDbContext context)
+        public OrderController(ICMSRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: Admin/Order
         public async Task<IActionResult> Index()
         {
-            var orders = await _context.Order.Include(o => o.OrderItems).Include(o => o.ModifiedBy).OrderBy(o => o.Id).ToListAsync();
-
-            foreach (var order in orders)
-            {
-                await IncludeUserFields(order);
-
-                foreach (var item in order.OrderItems)
-                {
-                    await IncludeProductFields(item);
-                }
-            }
+            var orders = await _repo.GetAllOrdersAsync();
 
             return View(orders);
         }
@@ -49,19 +40,14 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Order.Include(o => o.ModifiedBy).Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int orderId = id.Value;
+            var order = await _repo.GetOrderByIdAsync(orderId);
+
             if (order == null)
             {
                 return NotFound();
             }
 
-            foreach (var item in order.OrderItems)
-            {
-                await IncludeProductFields(item);
-            }
-
-            await IncludeUserFields(order);
             return View(order);
         }
 
@@ -82,10 +68,9 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 order.State = Order.OrderState.New;
                 order.CreatedAt = DateTime.Now;
                 order.ModifiedAt = DateTime.Now;
-                order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
+                order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
-                _context.Add(order);
-                await _context.SaveChangesAsync();
+                await _repo.InsertOrderAsync(order);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -101,15 +86,15 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Order.FindAsync(id);
+            int orderId = id.Value;
+            var order = await _repo.GetOrderByIdAsync(orderId);
             if (order == null)
             {
                 return NotFound();
             }
 
             ViewBag.States = GetOrderStateSelectList();
-            ViewBag.Users = await GetUserSelectList ();
-            await IncludeUserFields(order);
+            ViewBag.Users = await GetUserSelectList();
             return View(order);
         }
 
@@ -142,16 +127,16 @@ namespace WebAppCMS.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 order.ModifiedAt = DateTime.Now;
-                order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
+                order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
                 try
                 {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
+                    await _repo.UpdateOrderAsync(order);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrderExists(order.Id))
+                    var exists = await OrderExists(order.Id);
+                    if (!exists)
                     {
                         return NotFound();
                     }
@@ -164,8 +149,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             }
 
             ViewBag.States = GetOrderStateSelectList();
-            ViewBag.Users = await GetUserSelectList ();
-            await IncludeUserFields(order);
+            ViewBag.Users = await GetUserSelectList();
             return View(order);
         }
 
@@ -177,21 +161,15 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Order
-                .Include(o => o.ModifiedBy)
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int orderId = id.Value;
+
+            var order = await _repo.GetOrderByIdAsync(orderId);
+
             if (order == null)
             {
                 return NotFound();
             }
 
-            foreach (var item in order.OrderItems)
-            {
-                await IncludeProductFields(item);
-            }
-
-            await IncludeUserFields(order);
             return View(order);
         }
 
@@ -199,14 +177,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.Order.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.Id == id);
-            foreach (var item in order.OrderItems)
-            {
-                _context.OrderItem.Remove(item);
-            }
-
-            _context.Order.Remove(order);
-            await _context.SaveChangesAsync();
+            await _repo.DeleteOrderAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -239,14 +210,16 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 orderItem.OrderId = orderId;
 
                 // Find OrderItem with Product
-                var existingOrderItem = await _context.OrderItem.FirstOrDefaultAsync(item => item.ProductId == orderItem.ProductId && item.OrderId == orderId);
+                var existingOrderItem = (await _repo.GetAllOrderItemsAsync(orderId)).FirstOrDefault(item => item.ProductId == orderItem.ProductId);
+                
                 if (existingOrderItem == null)
                 {
                     // New product
                     orderItem.CreatedAt = timestamp;
                     orderItem.ModifiedAt = timestamp;
-                    orderItem.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                    _context.Add(orderItem);
+                    orderItem.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
+
+                    await _repo.InsertOrderItemAsync(orderItem);
                 }
                 else
                 {
@@ -254,17 +227,17 @@ namespace WebAppCMS.Areas.Admin.Controllers
                     var newQuantity = existingOrderItem.Quantity + orderItem.Quantity;
                     existingOrderItem.Quantity = newQuantity;
                     existingOrderItem.ModifiedAt = timestamp;
-                    existingOrderItem.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                    _context.Update(existingOrderItem);
+                    existingOrderItem.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
+
+                    await _repo.UpdateOrderItemAsync(existingOrderItem);
                 }
 
                 // Order
-                var order = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderId);
+                var order = await _repo.GetOrderByIdAsync(orderId);
                 order.ModifiedAt = timestamp;
-                order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                _context.Update(order);
+                order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
+                await _repo.UpdateOrderAsync(order);
 
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Details), new { id = orderId });
             }
 
@@ -283,14 +256,13 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var orderItem = await _context.OrderItem.Include(item => item.ModifiedBy)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int orderItemId = id.Value;
+            var orderItem = await _repo.GetOrderItemByIdAsync(orderItemId);
+
             if (orderItem == null)
             {
                 return NotFound();
             }
-
-            await IncludeProductFields(orderItem);
 
             return View(orderItem);
         }
@@ -300,17 +272,23 @@ namespace WebAppCMS.Areas.Admin.Controllers
         [Route("Admin/OrderItem/Delete")]
         public async Task<IActionResult> DeleteItemConfirmed(int id)
         {
+            var orderItem = await _repo.GetOrderItemByIdAsync(id);
+
+            if (orderItem == null)
+            {
+                return NotFound();
+            }
+
             // Remove OrderItem
-            var orderItem = await _context.OrderItem.FindAsync(id);
-            _context.OrderItem.Remove(orderItem);
+            await _repo.DeleteOrderItemAsync(id);
 
             // Update Order Modified fields
-            var order = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderItem.OrderId);
+            var order = await _repo.GetOrderByIdAsync(orderItem.OrderId);
             order.ModifiedAt = DateTime.Now;
-            order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
-            _context.Update(order);
+            order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
-            await _context.SaveChangesAsync();
+            await _repo.UpdateOrderAsync(order);
+
             return RedirectToAction(nameof(Details), new { id = orderItem.OrderId });
         }
 
@@ -320,17 +298,16 @@ namespace WebAppCMS.Areas.Admin.Controllers
         public async Task<IActionResult> AddOne(int id)
         {
             // Update OrderItem
-            var orderItem = await _context.OrderItem.FindAsync(id);
+            var orderItem = await _repo.GetOrderItemByIdAsync(id);
             orderItem.Quantity++;
-            _context.Update(orderItem);
+            await _repo.UpdateOrderItemAsync(orderItem);
 
             // Update Order Modified fields
-            var order = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderItem.OrderId);
+            var order = await _repo.GetOrderByIdAsync(orderItem.OrderId);
             order.ModifiedAt = DateTime.Now;
-            order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
-            _context.Update(order);
+            order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
+            await _repo.UpdateOrderAsync(order);
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { id = orderItem.OrderId });
         }
 
@@ -340,34 +317,34 @@ namespace WebAppCMS.Areas.Admin.Controllers
         public async Task<IActionResult> RemoveOne(int id)
         {
             // OrderItem
-            var orderItem = await _context.OrderItem.FindAsync(id);
+            var orderItem = await _repo.GetOrderItemByIdAsync(id);
             var newQuantity = orderItem.Quantity - 1;
 
             if (newQuantity == 0)
             {
-                _context.OrderItem.Remove(orderItem);
+                return RedirectToAction(nameof(DeleteItem), new { id = orderItem.Id });
             }
             else
             {
                 orderItem.Quantity = newQuantity;
-                _context.Update(orderItem);
+                await _repo.UpdateOrderItemAsync(orderItem);
+
+                // Update Order Modified fields
+                var order = await _repo.GetOrderByIdAsync(orderItem.OrderId);
+                order.ModifiedAt = DateTime.Now;
+                order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
+                await _repo.UpdateOrderAsync(order);
+
+                return RedirectToAction(nameof(Details), new { id = orderItem.OrderId });
             }
-
-            // Update Order Modified fields
-            var order = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderItem.OrderId);
-            order.ModifiedAt = DateTime.Now;
-            order.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
-            _context.Update(order);
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new { id = orderItem.OrderId });
         }
 
         #endregion
 
-        private bool OrderExists(int id)
+        private async Task<bool> OrderExists(int id)
         {
-            return _context.Order.Any(e => e.Id == id);
+            var existingOrder = await _repo.GetOrderByIdAsync(id);
+            return existingOrder != null;
         }
 
         private string GetCurrentUserId()
@@ -377,11 +354,11 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         private async Task<List<SelectListItem>> GetUserSelectList()
         {
-            var users = await _context.Users
+            var users = (await _repo.GetAllUsersAsync())
                 .Select
                 (
                     item => new SelectListItem() { Text = item.UserName, Value = item.Id.ToString() }
-                ).ToListAsync();
+                ).ToList();
 
             return users;
         }
@@ -399,26 +376,13 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         private async Task<List<SelectListItem>> GetProductSelectList()
         {
-            var products = await _context.Product
+            var products = (await _repo.GetAllProductsAsync())
                 .Select
                 (
                     item => new SelectListItem() { Text = $"{item.Name} (Price: {item.UnitPrice})", Value = item.Id.ToString() }
-                ).ToListAsync();
+                ).ToList();
 
             return products;
-        }
-
-        private async Task IncludeUserFields(Order order)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == order.UserId);
-            order.UserName = user.UserName;
-        }
-
-        private async Task IncludeProductFields(OrderItem orderItem)
-        {
-            var product = await _context.Product.FirstOrDefaultAsync(p => p.Id == orderItem.ProductId);
-            orderItem.ProductName = product.Name;
-            orderItem.ProductUnitPrice = product.UnitPrice;
         }
     }
 }

@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebAppCMS.Data;
-using WebAppCMS.Models;
+using WebAppCMS.Data.Interfaces;
+using WebAppCMS.Data.Models;
 
 namespace WebAppCMS.Areas.Admin.Controllers
 {
@@ -16,23 +16,20 @@ namespace WebAppCMS.Areas.Admin.Controllers
     [Authorize(Roles = "Admin,Supervisor")]
     public class ProductController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICMSRepository _repo;
 
-        public ProductController(ApplicationDbContext context)
+        public ProductController(ICMSRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: Admin/Product
         public async Task<IActionResult> Index(int? categoryId)
         {
-            var products = await _context.Product.Include(p => p.ModifiedBy)
-                .Where(p => categoryId == null || p.CategoryId == categoryId)
-                .OrderBy(p => p.Name)
-                .ToListAsync();
-            foreach (var product in products)
+            var products = await _repo.GetAllProductsAsync();
+            if (categoryId.HasValue)
             {
-                await IncludeCategoryFields(product);
+                products = products.Where(p => categoryId == null || p.CategoryId == categoryId).ToList();
             }
 
             ViewBag.CategoryId = categoryId;
@@ -62,10 +59,9 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 product.IsAvailable = true;
                 product.CreatedAt = DateTime.Now;
                 product.ModifiedAt = DateTime.Now;
-                product.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
+                product.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                await _repo.InsertProductAsync(product);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -81,14 +77,15 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.FindAsync(id);
+            int productId = id.Value;
+
+            var product = await _repo.GetProductByIdAsync(productId);
             if (product == null)
             {
                 return NotFound();
             }
 
             ViewBag.Categories = await GetCategorySelectList();
-            await IncludeCategoryFields(product);
             return View(product);
         }
 
@@ -109,16 +106,16 @@ namespace WebAppCMS.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 product.ModifiedAt = DateTime.Now;
-                product.ModifiedBy = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentUserId());
+                product.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    await _repo.UpdateProductAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    var exists = await ProductExists(product.Id);
+                    if (!exists)
                     {
                         return NotFound();
                     }
@@ -131,7 +128,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
             }
 
             ViewBag.Categories = await GetCategorySelectList();
-            await IncludeCategoryFields(product);
             return View(product);
         }
 
@@ -143,16 +139,15 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
-                .Include(p => p.ModifiedBy)
-                .Include(p => p.OrderItems)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int productId = id.Value;
+
+            var product = await _repo.GetProductByIdAsync(productId);
+
             if (product == null)
             {
                 return NotFound();
             }
 
-            await IncludeCategoryFields(product);
             return View(product);
         }
 
@@ -160,15 +155,14 @@ namespace WebAppCMS.Areas.Admin.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.FindAsync(id);
-            _context.Product.Remove(product);
-            await _context.SaveChangesAsync();
+            await _repo.DeleteProductAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private async Task<bool> ProductExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            var existingProduct = await _repo.GetProductByIdAsync(id);
+            return existingProduct != null;
         }
 
         private string GetCurrentUserId()
@@ -178,19 +172,15 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         private async Task<List<SelectListItem>> GetCategorySelectList()
         {
-            var categories = _context.Category
+            var categories = await _repo.GetAllCategoriesAsync();
+                
+            var selectList = categories
                 .Select
                 (
                     item => new SelectListItem() { Text = item.Name, Value = item.Id.ToString() }
-                ).ToListAsync();
+                ).ToList();
 
-            return await categories;
-        }
-
-        private async Task IncludeCategoryFields(Product product)
-        {
-            var category = await _context.Category.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
-            product.CategoryName = category.Name;
+            return selectList;
         }
     }
 }

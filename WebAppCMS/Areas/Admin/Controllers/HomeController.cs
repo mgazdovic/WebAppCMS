@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppCMS.Data;
+using WebAppCMS.Data.Interfaces;
 
 namespace WebAppCMS.Areas.Admin.Controllers
 {
@@ -13,29 +14,30 @@ namespace WebAppCMS.Areas.Admin.Controllers
     [Authorize(Roles="Admin,Supervisor")]
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICMSRepository _repo;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(ICMSRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         public async Task<IActionResult> Index()
         {
-            // Product
-            ViewBag.ProductRecordCount = await _context.Product.CountAsync();
-            ViewBag.ProductLastModified = await _context.Product.Include(p => p.ModifiedBy).OrderByDescending(p => p.ModifiedAt).FirstOrDefaultAsync();
+            var products = await _repo.GetAllProductsAsync();
+            ViewBag.ProductRecordCount = products.Count();
+            ViewBag.ProductLastModified = products.OrderByDescending(p => p.ModifiedAt).FirstOrDefault();
 
-            // Category 
-            ViewBag.CategoryRecordCount = await _context.Category.CountAsync();
-            ViewBag.CategoryLastModified = await _context.Category.Include(c => c.ModifiedBy).OrderByDescending(c => c.ModifiedAt).FirstOrDefaultAsync();
+            var categories = await _repo.GetAllCategoriesAsync();
+            ViewBag.CategoryRecordCount = categories.Count();
+            ViewBag.CategoryLastModified = categories.OrderByDescending(c => c.ModifiedAt).FirstOrDefault();
 
-            // Order
-            ViewBag.OrderRecordCount = await _context.Order.CountAsync();
-            ViewBag.OrderLastModified = await _context.Order.Include(o => o.ModifiedBy).OrderByDescending(o => o.ModifiedAt).FirstOrDefaultAsync();
+            var orders = await _repo.GetAllOrdersAsync();
+            ViewBag.OrderRecordCount = orders.Count();
+            ViewBag.OrderLastModified = orders.OrderByDescending(o => o.ModifiedAt).FirstOrDefault();
 
-            // User
-            ViewBag.UserRecordCount = await _context.Users.CountAsync();
+            var users = await _repo.GetAllUsersAsync();
+            ViewBag.UserRecordCount = users.Count();
+            ViewBag.UserLastModified = users.OrderByDescending(o => o.ModifiedAt).FirstOrDefault();
 
             return View();
         }

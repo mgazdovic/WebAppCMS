@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace WebAppCMS.Models
+namespace WebAppCMS.Data.Models
 {
     public class Category
     {
@@ -23,6 +23,6 @@ namespace WebAppCMS.Models
         public DateTime ModifiedAt { get; set; }
 
         [Display(Name = "Modified By")]
-        public IdentityUser ModifiedBy { get; set; }
+        public AppUser ModifiedBy { get; set; }
     }
 }
