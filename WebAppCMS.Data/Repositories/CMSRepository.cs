@@ -112,6 +112,7 @@ namespace WebAppCMS.Data.Repositories
                                Description = prod.Description,
                                UnitPrice = prod.UnitPrice,
                                IsAvailable = prod.IsAvailable,
+                               Image = prod.Image,
                                OrderItems = prod.OrderItems,
                                CreatedAt = prod.CreatedAt,
                                ModifiedAt = prod.ModifiedAt,
@@ -148,6 +149,7 @@ namespace WebAppCMS.Data.Repositories
                 toUpdate.Description = product.Description;
                 toUpdate.IsAvailable = product.IsAvailable;
                 toUpdate.UnitPrice = product.UnitPrice;
+                toUpdate.Image = product.Image;
 
                 toUpdate.ModifiedBy = product.ModifiedBy;
                 toUpdate.ModifiedAt = DateTime.Now;

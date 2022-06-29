@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -35,6 +36,9 @@ namespace WebAppCMS.Data.Models
         public bool IsAvailable { get; set; }
 
         public byte[] Image { get; set; }
+
+        [NotMapped]
+        public IFormFile ImageFile { get; set; }
 
         public List<OrderItem> OrderItems { get; set; }
 

@@ -5,12 +5,20 @@
 }
 
 <h1>Edit</h1>
-
 <h4>Product</h4>
+
+@if (Model.Image != null && !String.IsNullOrEmpty(@Model.GetImageAsBase64String()))
+{
+    <hr />
+    <img style="width:200px;height:200px" src="data:image/*;base64,@Model.GetImageAsBase64String()" />
+}
+
+<hr />
+
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="CreatedAt" />
@@ -62,6 +70,16 @@
                 </select>
                 <span asp-validation-for="IsAvailable" class="text-danger"></span>
             </div>
+
+            <hr />
+
+            <div class="form-group">
+                <label asp-for="ImageFile" class="control-label">Upload Image</label>
+                <input asp-for="ImageFile" class="form-control-file" accept="image/*" />
+            </div>
+
+            <hr />
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

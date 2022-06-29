@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -47,7 +48,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Product/Create
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,UnitPrice,CategoryId")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,UnitPrice,CategoryId,ImageFile")] Product product)
         {
             if(product.UnitPrice <= 0)
             {
@@ -60,6 +61,17 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 product.CreatedAt = DateTime.Now;
                 product.ModifiedAt = DateTime.Now;
                 product.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
+
+                if (product.ImageFile != null)
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        product.ImageFile.CopyTo(stream);
+                        var file = stream.ToArray();
+
+                        product.Image = file;
+                    }
+                }
 
                 await _repo.InsertProductAsync(product);
                 return RedirectToAction(nameof(Index));
@@ -91,7 +103,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Product/Edit/5
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,UnitPrice,CategoryId,IsAvailable,CreatedAt")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,UnitPrice,CategoryId,IsAvailable,ImageFile,CreatedAt")] Product product)
         {
             if (id != product.Id)
             {
@@ -107,6 +119,17 @@ namespace WebAppCMS.Areas.Admin.Controllers
             {
                 product.ModifiedAt = DateTime.Now;
                 product.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
+
+                if (product.ImageFile != null)
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        product.ImageFile.CopyTo(stream);
+                        var file = stream.ToArray();
+
+                        product.Image = file;
+                    }
+                }
 
                 try
                 {
