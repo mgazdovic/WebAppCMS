@@ -34,6 +34,8 @@ namespace WebAppCMS.Data.Models
         [Display(Name = "Available")]
         public bool IsAvailable { get; set; }
 
+        public byte[] Image { get; set; }
+
         public List<OrderItem> OrderItems { get; set; }
 
         [Display(Name = "Created")]
@@ -44,5 +46,10 @@ namespace WebAppCMS.Data.Models
 
         [Display(Name = "Modified By")]
         public AppUser ModifiedBy { get; set; }
+
+        public string GetImageAsBase64String()
+        {
+            return Convert.ToBase64String(Image);
+        }
     }
 }
