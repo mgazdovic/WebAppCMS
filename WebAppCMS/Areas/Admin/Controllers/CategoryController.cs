@@ -87,7 +87,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             }
 
             var categories = await _repo.GetAllCategoriesAsync();
-            var existingCategory = categories.FirstOrDefault(c => c.Name == category.Name);
+            var existingCategory = categories.FirstOrDefault(c => c.Name == category.Name && c.Id != category.Id);
             if (existingCategory != null)
             {
                 ModelState.AddModelError("Name", "Category already exists! Please choose a different name.");
