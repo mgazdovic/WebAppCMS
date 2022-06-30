@@ -12,6 +12,8 @@
     <div class="col-md-4">
 
         <form method="post">
+            @Html.AntiForgeryToken()
+
             <input type="hidden" name="userId" value="@ViewBag.UserId" />
             <div class="card">
                 <div class="card-header">

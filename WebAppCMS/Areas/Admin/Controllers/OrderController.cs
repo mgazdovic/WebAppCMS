@@ -61,6 +61,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Order/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserId,DeliveryFirstName,DeliveryLastName,DeliveryFullAddress,Message")] Order order)
         {            
             if (ModelState.IsValid)
@@ -98,6 +99,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Order/Edit/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,State,PercentDiscount,PercentTax,DeliveryFee,DeliveryFirstName,DeliveryLastName,DeliveryFullAddress,Message,CreatedAt")] Order order)
         {
             if (id != order.Id)
@@ -172,6 +174,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Order/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _repo.DeleteOrderAsync(id);
@@ -192,6 +195,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         // POST
         [HttpPost]
         [Route("Admin/Order/{orderId}/AddItem")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddItem([Bind("Id,ProductId,Quantity")] OrderItem orderItem, int orderId)
         {
             if (orderItem.Quantity <= 0)
@@ -262,6 +266,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         // POST: Admin/OrderItem/Delete/5
         [HttpPost]
         [Route("Admin/OrderItem/Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteItemConfirmed(int id)
         {
             var orderItem = await _repo.GetOrderItemByIdAsync(id);
@@ -286,6 +291,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         // POST: Admin/OrderItem/AddOne/5
         [HttpPost]
         [Route("Admin/OrderItem/{id}/AddOne")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddOne(int id)
         {
             // Update OrderItem
@@ -304,6 +310,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         // POST: Admin/OrderItem/RemoveOne/5
         [HttpPost]
         [Route("Admin/OrderItem/RemoveOne")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveOne(int id)
         {
             // OrderItem

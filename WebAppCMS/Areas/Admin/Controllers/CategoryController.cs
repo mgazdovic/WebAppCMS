@@ -37,6 +37,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Category/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
         {
             if (ModelState.IsValid)
@@ -79,6 +80,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Category/Edit/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CreatedAt")] Category category)
         {
             if (id != category.Id)
@@ -140,6 +142,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Category/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _repo.DeleteCategoryAsync(id);

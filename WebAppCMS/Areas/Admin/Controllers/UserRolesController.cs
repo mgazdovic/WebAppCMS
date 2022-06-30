@@ -69,6 +69,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfigureRolesForUser(List<ConfigureUserRolesViewModel> model, string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);

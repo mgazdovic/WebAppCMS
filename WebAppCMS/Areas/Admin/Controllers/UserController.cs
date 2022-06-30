@@ -38,7 +38,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken] 
         public async Task<IActionResult> Create(AppUserViewModel user)
         {
             if (ModelState.IsValid)
@@ -104,6 +104,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditDetails(string id, EditAppUserViewModel appUserViewModel)
         {
             var existingUser = await _userManager.FindByIdAsync(id);
@@ -165,6 +166,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(string id, string password)
         {
             var existingUser = await _userManager.FindByIdAsync(id);
@@ -228,6 +230,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var appUser = await _userManager.FindByIdAsync(id);

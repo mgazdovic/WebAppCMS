@@ -17,6 +17,8 @@
 }
 
 <form method="post" asp-action="AddRole" asp-controller="Role">
+    @Html.AntiForgeryToken()
+
     <div class="row">
         <div class="col-md-6">
             <div class="input-group">
@@ -43,6 +45,8 @@
                 <td>@item.Name</td>
                 <td>
                     <form method="post" asp-action="DeleteRole" asp-controller="Role" asp-route-roleName="@item.Name">
+                        @Html.AntiForgeryToken()
+
                         <input type="submit" value="Delete" class="btn btn-danger w-auto" />
                     </form>
                 </td>

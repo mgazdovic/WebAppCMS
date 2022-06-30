@@ -48,6 +48,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Product/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,UnitPrice,CategoryId,ImageFile")] Product product)
         {
             if(product.UnitPrice <= 0)
@@ -101,6 +102,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Product/Edit/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,UnitPrice,CategoryId,IsAvailable,ImageFile,CreatedAt")] Product product)
         {
             if (id != product.Id)
@@ -173,6 +175,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         // POST: Admin/Product/Delete/5
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _repo.DeleteProductAsync(id);

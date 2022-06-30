@@ -56,11 +56,15 @@
                         </td>
                         <td>
                             <form asp-action="AddOne" asp-route-id="@item.Id">
+                                @Html.AntiForgeryToken()
+
                                 <input type="submit" value="+1" class="btn btn-primary w-auto" />
                             </form>
                         </td>
                         <td>
                             <form asp-action="RemoveOne" asp-route-id="@item.Id">
+                                @Html.AntiForgeryToken()
+
                                 <input type="submit" value="-1" class="btn btn-warning w-auto" />
                             </form>
                         </td>

@@ -57,6 +57,8 @@
     </dl>
 
     <form asp-action="DeleteItem">
+        @Html.AntiForgeryToken()
+
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Details" asp-route-id="@Model.OrderId">Back to Order</a>

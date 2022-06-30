@@ -27,6 +27,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddRole(string roleName)
         {
             if (roleName != null)
@@ -48,6 +49,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteRole(string roleName)
         {
             if (roleName != null)
