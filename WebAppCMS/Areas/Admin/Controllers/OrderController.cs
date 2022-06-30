@@ -66,8 +66,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 order.State = Order.OrderState.New;
-                order.CreatedAt = DateTime.Now;
-                order.ModifiedAt = DateTime.Now;
                 order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
                 await _repo.InsertOrderAsync(order);
@@ -126,7 +124,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                order.ModifiedAt = DateTime.Now;
                 order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
                 try
@@ -204,7 +201,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var timestamp = DateTime.Now;
                 var userId = GetCurrentUserId();
 
                 orderItem.OrderId = orderId;
@@ -215,8 +211,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 if (existingOrderItem == null)
                 {
                     // New product
-                    orderItem.CreatedAt = timestamp;
-                    orderItem.ModifiedAt = timestamp;
                     orderItem.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
                     await _repo.InsertOrderItemAsync(orderItem);
@@ -226,7 +220,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
                     // Existing product
                     var newQuantity = existingOrderItem.Quantity + orderItem.Quantity;
                     existingOrderItem.Quantity = newQuantity;
-                    existingOrderItem.ModifiedAt = timestamp;
                     existingOrderItem.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
                     await _repo.UpdateOrderItemAsync(existingOrderItem);
@@ -234,7 +227,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
                 // Order
                 var order = await _repo.GetOrderByIdAsync(orderId);
-                order.ModifiedAt = timestamp;
                 order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
                 await _repo.UpdateOrderAsync(order);
 
@@ -284,7 +276,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             // Update Order Modified fields
             var order = await _repo.GetOrderByIdAsync(orderItem.OrderId);
-            order.ModifiedAt = DateTime.Now;
             order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
             await _repo.UpdateOrderAsync(order);
@@ -304,7 +295,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             // Update Order Modified fields
             var order = await _repo.GetOrderByIdAsync(orderItem.OrderId);
-            order.ModifiedAt = DateTime.Now;
             order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
             await _repo.UpdateOrderAsync(order);
 
@@ -331,7 +321,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
                 // Update Order Modified fields
                 var order = await _repo.GetOrderByIdAsync(orderItem.OrderId);
-                order.ModifiedAt = DateTime.Now;
                 order.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
                 await _repo.UpdateOrderAsync(order);
 

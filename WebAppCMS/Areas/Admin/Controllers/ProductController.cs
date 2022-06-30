@@ -58,8 +58,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 product.IsAvailable = true;
-                product.CreatedAt = DateTime.Now;
-                product.ModifiedAt = DateTime.Now;
                 product.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
                 if (product.ImageFile != null)
@@ -117,7 +115,6 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                product.ModifiedAt = DateTime.Now;
                 product.ModifiedBy = await _repo.GetUserByIdAsync(GetCurrentUserId());
 
                 if (product.ImageFile != null)
