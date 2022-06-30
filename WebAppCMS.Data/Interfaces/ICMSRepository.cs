@@ -21,9 +21,17 @@ namespace WebAppCMS.Data.Interfaces
 
         Task<List<Category>> CategoryQueryFilterAsync(string s, string orderBy, int perPage);
 
+        Task<int> GetCategoryCountAsync();
+
+        Task<Category> GetLastModifiedCategoryAsync();
+
         Task<List<AppUser>> GetAllUsersAsync();
 
         Task<AppUser> GetUserByIdAsync(string id);
+
+        Task<int> GetAppUserCountAsync();
+
+        Task<AppUser> GetLastModifiedAppUserAsync();
 
         Task<List<Product>> GetAllProductsAsync();
 
@@ -36,6 +44,10 @@ namespace WebAppCMS.Data.Interfaces
         Task DeleteProductAsync(int id);
 
         Task<List<Product>> ProductQueryFilterAsync(string s, string orderBy, int perPage);
+
+        Task<int> GetProductCountAsync();
+
+        Task<Product> GetLastModifiedProductAsync();
 
         Task<List<Order>> GetAllOrdersAsync();
 
@@ -58,6 +70,10 @@ namespace WebAppCMS.Data.Interfaces
         Task<OrderItem> UpdateOrderItemAsync(OrderItem orderItem);
 
         Task DeleteOrderItemAsync(int id);
+
+        Task<int> GetOrderCountAsync();
+
+        Task<Order> GetLastModifiedOrderAsync();
 
     }
 }

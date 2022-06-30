@@ -89,6 +89,18 @@ namespace WebAppCMS.Data.Repositories
             return filter;
         }
 
+        public async Task<int> GetCategoryCountAsync()
+        {
+            var count = await _context.Category.CountAsync();
+            return count;
+        }
+
+        public async Task<Category> GetLastModifiedCategoryAsync()
+        {
+            var lastModified = await _context.Category.Include(c => c.ModifiedBy).OrderByDescending(c => c.ModifiedAt).FirstOrDefaultAsync();
+            return lastModified;
+        }
+
         public async Task<List<AppUser>> GetAllUsersAsync()
         {
             return await _context.Users.Include(u => u.ModifiedBy).ToListAsync();
@@ -97,6 +109,18 @@ namespace WebAppCMS.Data.Repositories
         public async Task<AppUser> GetUserByIdAsync(string id)
         {
             return await _context.Users.Include(u => u.ModifiedBy).FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<int> GetAppUserCountAsync()
+        {
+            var count = await _context.Users.CountAsync();
+            return count;
+        }
+
+        public async Task<AppUser> GetLastModifiedAppUserAsync()
+        {
+            var lastModified = await _context.Users.Include(u => u.ModifiedBy).OrderByDescending(c => c.ModifiedAt).FirstOrDefaultAsync();
+            return lastModified;
         }
 
         public async Task<List<Product>> GetAllProductsAsync()
@@ -192,6 +216,18 @@ namespace WebAppCMS.Data.Repositories
 
                 return filter;
             }
+        }
+
+        public async Task<int> GetProductCountAsync()
+        {
+            var count = await _context.Product.CountAsync();
+            return count;
+        }
+
+        public async Task<Product> GetLastModifiedProductAsync()
+        {
+            var lastModified = await _context.Product.Include(p => p.ModifiedBy).OrderByDescending(c => c.ModifiedAt).FirstOrDefaultAsync();
+            return lastModified;
         }
 
         public async Task<List<Order>> GetAllOrdersAsync()
@@ -364,6 +400,18 @@ namespace WebAppCMS.Data.Repositories
                 _context.OrderItem.Remove(toDelete);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<int> GetOrderCountAsync()
+        {
+            var count = await _context.Order.CountAsync();
+            return count;
+        }
+
+        public async Task<Order> GetLastModifiedOrderAsync()
+        {
+            var lastModified = await _context.Order.Include(o => o.ModifiedBy).OrderByDescending(c => c.ModifiedAt).FirstOrDefaultAsync();
+            return lastModified;
         }
     }
 }
