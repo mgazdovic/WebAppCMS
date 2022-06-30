@@ -5,6 +5,12 @@
 
 <h1>User Role Overview</h1>
 
+@if (TempData["UnableToRemoveMsg"] != null)
+{
+    <p class="alert-warning col-md-6">@TempData["UnableToRemoveMsg"].ToString()</p>
+    <hr />
+}
+
 <hr />
 <a asp-controller="User" asp-action="Index" class="btn btn-primary">User Administration</a>
 |

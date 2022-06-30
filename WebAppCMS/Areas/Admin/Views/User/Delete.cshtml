@@ -22,10 +22,19 @@
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            
-            <div class="form-group">
-                <input type="submit" value="Delete" class="btn btn-danger" />
-            </div>
+
+            @if (String.IsNullOrEmpty(ViewBag.UnableToDeleteMsg))
+            {
+                <div class="form-group">
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                </div>
+            }
+            else
+            {
+                <p class="alert-warning">@ViewBag.UnableToDeleteMsg</p>
+                <hr />
+            }
+
         </form>
     </div>
 </div>

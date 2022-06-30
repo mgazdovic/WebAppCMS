@@ -27,21 +27,8 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var users = await _userManager.Users.ToListAsync();
-            var usersWithRoles = new List<UserRolesViewModel>();
+            var usersWithRoles = await GetAllUsersWithRoles();
 
-            foreach (var user in users)
-            {
-                var userWithRole = new UserRolesViewModel()
-                {
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    Roles = new List<string>(await _userManager.GetRolesAsync(user))
-                };
-
-                usersWithRoles.Add(userWithRole);
-            }
-            
             return View(usersWithRoles);
         }
 
@@ -60,7 +47,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             var model = new List<ConfigureUserRolesViewModel>();
             foreach (var role in _roleManager.Roles)
             {
-                var addRemoveUserRole = new ConfigureUserRolesViewModel()
+                var configureUserRole = new ConfigureUserRolesViewModel()
                 {
                     Id = role.Id,
                     RoleName = role.Name
@@ -68,14 +55,14 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
                 if (await _userManager.IsInRoleAsync(user, role.Name))
                 {
-                    addRemoveUserRole.Selected = true;
+                    configureUserRole.Selected = true;
                 }
                 else
                 {
-                    addRemoveUserRole.Selected = false;
+                    configureUserRole.Selected = false;
                 }
 
-                model.Add(addRemoveUserRole);
+                model.Add(configureUserRole);
             }
 
             return View(model);
@@ -89,6 +76,17 @@ namespace WebAppCMS.Areas.Admin.Controllers
             if (user == null)
             {
                 return NotFound();
+            }
+
+            string adminRoleName = "Admin";
+            if (await _userManager.IsInRoleAsync(user, adminRoleName))
+            {
+                var adminUsers = await _userManager.GetUsersInRoleAsync("Admin");
+                if (adminUsers.Count == 1)
+                {
+                    TempData["UnableToRemoveMsg"] = "Unable to remove Admin role from the only existing Admin user.";
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -131,6 +129,26 @@ namespace WebAppCMS.Areas.Admin.Controllers
         private string GetCurrentUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value.ToString();
+        }
+
+        private async Task<List<UserRolesViewModel>> GetAllUsersWithRoles()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var usersWithRoles = new List<UserRolesViewModel>();
+
+            foreach (var user in users)
+            {
+                var userWithRole = new UserRolesViewModel()
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Roles = new List<string>(await _userManager.GetRolesAsync(user))
+                };
+
+                usersWithRoles.Add(userWithRole);
+            }
+
+            return usersWithRoles;
         }
     }
 }

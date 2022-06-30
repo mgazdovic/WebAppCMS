@@ -211,6 +211,16 @@ namespace WebAppCMS.Areas.Admin.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
+                string adminRoleName = "Admin";
+                if (await _userManager.IsInRoleAsync(user, adminRoleName))
+                {
+                    var adminUsers = await _userManager.GetUsersInRoleAsync("Admin");
+                    if (adminUsers.Count == 1)
+                    {
+                        ViewBag.UnableToDeleteMsg = "Unable to delete the only existing Admin user.";
+                    }
+                }
+                
                 return View(user);
             }
 
