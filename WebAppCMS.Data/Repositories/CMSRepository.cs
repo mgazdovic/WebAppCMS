@@ -68,25 +68,38 @@ namespace WebAppCMS.Data.Repositories
             return added;
         }
 
-        public async Task<List<Category>> CategoryQueryFilterAsync(string s, string orderBy, int perPage)
+        /// <summary>
+        /// Query is based on Name field.
+        /// </summary>
+        public async Task<List<Category>> CategoryQueryFilterAsync(string filter, int recordsPerPage = 25, int recordsForPageNo = 1, bool orderByDesc = false)
         {
-            var filter = await GetAllCategoriesAsync();
+            var records = await GetAllCategoriesAsync();
 
-            if (!string.IsNullOrEmpty(s))
+            // Filter
+            if (!string.IsNullOrEmpty(filter))
             {
-                filter = filter
-                    .Where(c => c.Name.Contains(s, StringComparison.CurrentCultureIgnoreCase))
+                records = records
+                    .Where(r => r.Name.Contains(filter, StringComparison.CurrentCultureIgnoreCase))
                     .ToList();
             }
 
-            filter = orderBy == "desc" ? filter.OrderByDescending(c => c.Id).ToList() : filter.OrderBy(c => c.Id).ToList();
-
-            if (perPage > 0)
+            // Page
+            if (recordsPerPage > 0 && recordsForPageNo > 0)
             {
-                filter = filter.Take(perPage).ToList();
+                records = records.Skip((recordsForPageNo - 1) * recordsPerPage).Take(recordsPerPage).ToList();
             }
 
-            return filter;
+            // Sort
+            if (orderByDesc)
+            {
+                records = records.OrderByDescending(r => r.Name).ToList();
+            }
+            else
+            {
+                records = records.OrderBy(r => r.Name).ToList();
+            }
+
+            return records;
         }
 
         public async Task<int> GetCategoryCountAsync()
@@ -195,27 +208,38 @@ namespace WebAppCMS.Data.Repositories
             }
         }
 
-        public async Task<List<Product>> ProductQueryFilterAsync(string s, string orderBy, int perPage)
+        /// <summary>
+        /// Query is based on Name field. 
+        /// </summary>
+        public async Task<List<Product>> ProductQueryFilterAsync(string filter, int recordsPerPage = 25, int recordsForPageNo = 1, bool orderByDesc = false)
         {
+            var records = await GetAllProductsAsync();
+
+            // Filter
+            if (!string.IsNullOrEmpty(filter))
             {
-                var filter = await GetAllProductsAsync();
-
-                if (!string.IsNullOrEmpty(s))
-                {
-                    filter = filter
-                        .Where(p => p.Name.Contains(s, StringComparison.CurrentCultureIgnoreCase))
-                        .ToList();
-                }
-
-                filter = orderBy == "desc" ? filter.OrderByDescending(c => c.Id).ToList() : filter.OrderBy(c => c.Id).ToList();
-
-                if (perPage > 0)
-                {
-                    filter = filter.Take(perPage).ToList();
-                }
-
-                return filter;
+                records = records
+                    .Where(r => r.Name.Contains(filter, StringComparison.CurrentCultureIgnoreCase))
+                    .ToList();
             }
+
+            // Page
+            if (recordsPerPage > 0 && recordsForPageNo > 0)
+            {
+                records = records.Skip((recordsForPageNo - 1) * recordsPerPage).Take(recordsPerPage).ToList();
+            }
+
+            // Sort
+            if (orderByDesc)
+            {
+                records = records.OrderByDescending(r => r.Name).ToList();
+            }
+            else
+            {
+                records = records.OrderBy(r => r.Name).ToList();
+            }
+
+            return records;
         }
 
         public async Task<int> GetProductCountAsync()
@@ -306,27 +330,38 @@ namespace WebAppCMS.Data.Repositories
             }
         }
 
-        public async Task<List<Order>> OrderQueryFilterAsync(string s, string orderBy, int perPage)
+        /// <summary>
+        /// Query is based on UserName field (representing the owner of the order). 
+        /// </summary>
+        public async Task<List<Order>> OrderQueryFilterAsync(string filter, int recordsPerPage = 25, int recordsForPageNo = 1, bool orderByDesc = false)
         {
+            var records = await GetAllOrdersAsync();
+
+            // Filter
+            if (!string.IsNullOrEmpty(filter))
             {
-                var filter = await GetAllOrdersAsync();
-
-                if (!string.IsNullOrEmpty(s))
-                {
-                    filter = filter
-                        .Where(o => o.UserName.Contains(s, StringComparison.CurrentCultureIgnoreCase))
-                        .ToList();
-                }
-
-                filter = orderBy == "desc" ? filter.OrderByDescending(c => c.Id).ToList() : filter.OrderBy(c => c.Id).ToList();
-
-                if (perPage > 0)
-                {
-                    filter = filter.Take(perPage).ToList();
-                }
-
-                return filter;
+                records = records
+                    .Where(r => r.UserName.Contains(filter, StringComparison.CurrentCultureIgnoreCase))
+                    .ToList();
             }
+
+            // Page
+            if (recordsPerPage > 0 && recordsForPageNo > 0)
+            {
+                records = records.Skip((recordsForPageNo - 1) * recordsPerPage).Take(recordsPerPage).ToList();
+            }
+
+            // Sort
+            if (orderByDesc)
+            {
+                records = records.OrderByDescending(r => r.UserName).ToList();
+            }
+            else
+            {
+                records = records.OrderBy(r => r.UserName).ToList();
+            }
+
+            return records;
         }
 
         public async Task<List<OrderItem>> GetAllOrderItemsAsync(int orderId)

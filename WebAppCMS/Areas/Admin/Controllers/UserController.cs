@@ -27,7 +27,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         
         public IActionResult Index()
         {
-            var users = _userManager.Users;
+            var users = _userManager.Users.OrderBy(u => u.UserName);
 
             return View(users);
         }

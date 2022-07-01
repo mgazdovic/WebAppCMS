@@ -21,7 +21,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         
         public IActionResult Index()
         {
-            var roles = _roleManager.Roles.ToList();
+            var roles = _roleManager.Roles.OrderBy(r => r.Name).ToList();
             
             return View(roles);
         }

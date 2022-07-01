@@ -24,9 +24,48 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         // GET: Admin/Category
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? filter, int? page, int? perPage)
         {
-            return View(await _repo.GetAllCategoriesAsync());
+            int pageInput = 1;
+            if (page.HasValue)
+            {
+                pageInput = page.Value;
+            }
+            ViewBag.page = pageInput;
+
+            string filterInput = "";
+            if (!String.IsNullOrEmpty(filter))
+            {
+                filterInput = filter;
+            }
+            ViewBag.filter = filter;
+
+            int perPageInput = 10;
+            if (perPage.HasValue && perPage > 0)
+            {
+                perPageInput = perPage.Value;
+            }
+            ViewBag.perPage = perPageInput;
+
+            var records = await _repo.CategoryQueryFilterAsync(filterInput, perPageInput, pageInput, false);
+            if(records != null)
+            {
+                var allRecords = await _repo.CategoryQueryFilterAsync(filterInput, -1, -1, false);
+                if (allRecords != null)
+                {
+                    int recordCount = allRecords.Count;
+
+                    int totalPageCount = recordCount / perPageInput;
+                    if (recordCount % perPageInput > 0)
+                    {
+                        totalPageCount++;
+                    }
+
+                    ViewBag.totalPageCount = totalPageCount;
+                }
+            }
+
+            return View(records);
         }
 
         // GET: Admin/Category/Create

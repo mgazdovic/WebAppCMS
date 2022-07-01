@@ -19,7 +19,7 @@ namespace WebAppCMS.Data.Interfaces
 
         Task DeleteCategoryAsync(int id);
 
-        Task<List<Category>> CategoryQueryFilterAsync(string s, string orderBy, int perPage);
+        Task<List<Category>> CategoryQueryFilterAsync(string filter, int recordsPerPage, int recordsForPageNo, bool orderByDesc);
 
         Task<int> GetCategoryCountAsync();
 
@@ -43,7 +43,7 @@ namespace WebAppCMS.Data.Interfaces
 
         Task DeleteProductAsync(int id);
 
-        Task<List<Product>> ProductQueryFilterAsync(string s, string orderBy, int perPage);
+        Task<List<Product>> ProductQueryFilterAsync(string filter, int recordsPerPage, int recordsForPageNo, bool orderByDesc);
 
         Task<int> GetProductCountAsync();
 
@@ -59,7 +59,7 @@ namespace WebAppCMS.Data.Interfaces
 
         Task DeleteOrderAsync(int id);
 
-        Task<List<Order>> OrderQueryFilterAsync(string s, string orderBy, int perPage);
+        Task<List<Order>> OrderQueryFilterAsync(string filter, int recordsPerPage, int recordsForPageNo, bool orderByDesc);
 
         Task<List<OrderItem>> GetAllOrderItemsAsync(int orderId);
 

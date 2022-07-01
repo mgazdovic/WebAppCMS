@@ -6,22 +6,71 @@
 
 <h1>Category Administration</h1>
 
+<hr />
+
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Create New</a>
 </p>
+
+<hr />
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form asp-action="Index" asp-route-filter=filter asp-route-perPage=perPage method="get">
+            <label> | Per Page | </label>
+            <select name="perPage">
+                @if (@ViewBag.perPage == null || (@ViewBag.perPage != 25 && @ViewBag.perPage != 50))
+                {
+                    <option value=10 selected>10</option>
+                }
+                else
+                {
+                    <option value=10>10</option>
+                }
+                @if (@ViewBag.perPage == 25)
+                {
+                    <option value=25 selected>25</option>
+                }
+                else
+                {
+                    <option value=25>25</option>
+                }
+                @if (@ViewBag.perPage == 50)
+                {
+                    <option value=50 selected>50</option>
+                }
+                else
+                {
+                    <option value=50>50</option>
+                }
+            </select>
+            <input type="text" name="filter" value="@ViewBag.filter" />
+            <input type="submit" class="btn btn-outline-secondary" value="Apply Filter">
+        </form>
+        @if (ViewBag.filter != null)
+        {
+            <div class="col-md-3">
+                <a asp-action="Index" class="btn btn-outline-success">Show All</a>
+            </div>
+        }
+    </div>
+</div>
+
 @if (Model.Count() == 0)
 {
-    <div class="row text-muted"> --- No records yet...</div>
+    <div class="row text-muted"> --- No records found...</div>
 }
 else
 {
     @if (TempData["Message"] != null)
-    { 
+    {
         <div class="row alert-success p-md-2">
             @TempData["Message"]
         </div>
     }
-    
+
+    <hr />
+
     <table class="table">
         <thead>
             <tr>
@@ -66,6 +115,30 @@ else
                     </td>
                 </tr>
             }
+            <tr>
+                <td class="text-muted">Page @ViewBag.page / @ViewBag.totalPageCount</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    @if (ViewBag.page > 1)
+                    {
+                        <a asp-action="Index" asp-route-filter="@ViewBag.filter" asp-route-page="@(ViewBag.page - 1)">Previous Page</a>
+                        <span> | </span>
+                    }
+                    @if (ViewBag.page < ViewBag.totalPageCount)
+                    {
+                        <a asp-action="Index" asp-route-filter="@ViewBag.filter" asp-route-page="@(ViewBag.page + 1)">Next Page</a>
+                    }
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
 }
@@ -73,5 +146,5 @@ else
 <hr />
 <hr />
 <p>
-    <a asp-controller="Home" asp-action="Index">Back</a>
+    <a asp-controller="Home" asp-action="Index">Back to Administration</a>
 </p>
