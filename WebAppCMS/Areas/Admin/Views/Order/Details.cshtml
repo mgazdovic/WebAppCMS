@@ -11,7 +11,7 @@
     <hr />
 
     <p>
-        <a asp-action="AddItem" asp-route-orderId="@Model.Id">Add Product</a>
+        <a asp-action="AddItem" asp-route-orderId="@Model.Id" class="btn btn-success">Add Product</a>
     </p>
 
     @if (Model.OrderItems == null || Model.OrderItems.Count == 0)
