@@ -13,7 +13,6 @@ namespace WebAppCMS.Data
             : base(options)
         {
         }
-        /* TODO: dodati seed u migraciju! (Entity.HasData ...) za jednog admin i jednog obicnog usera */
 
         public DbSet<Product> Product { get; set; }
         public DbSet<Category> Category { get; set; }
