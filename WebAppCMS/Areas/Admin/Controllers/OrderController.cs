@@ -66,7 +66,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 }
             }
 
-            return View(records);
+            return View(records.OrderBy(o => o.Id));
         }
 
         // GET: Admin/Order/Details/5

@@ -14,7 +14,7 @@
         </form>
 
         <p class="small text-muted">@ViewBag.ProductRecordCount record(s)</p>
-        @if (ViewBag.ProductLastModified != null)
+        @if (ViewBag.ProductLastModified != null && ViewBag.ProductLastModified.ModifiedBy != null)
         {
             <p class="small text-muted">Last modified <b>@ViewBag.ProductLastModified.ModifiedAt</b><br /> by user <b>@ViewBag.ProductLastModified.ModifiedBy.UserName</b></p>
         }
@@ -26,7 +26,7 @@
         </form>
 
         <p class="small text-muted">@ViewBag.CategoryRecordCount record(s)</p>
-        @if (ViewBag.CategoryLastModified != null)
+        @if (ViewBag.CategoryLastModified != null && ViewBag.CategoryLastModified.ModifiedBy != null)
         {
             <p class="small text-muted">Last modified <b>@ViewBag.CategoryLastModified.ModifiedAt</b><br /> by user <b>@ViewBag.CategoryLastModified.ModifiedBy.UserName</b></p>
         }
@@ -38,7 +38,7 @@
         </form>
 
         <p class="small text-muted">@ViewBag.OrderRecordCount record(s)</p>
-        @if (ViewBag.OrderLastModified != null)
+        @if (ViewBag.OrderLastModified != null && ViewBag.OrderLastModified.ModifiedBy != null)
         {
             <p class="small text-muted">Last modified <b>@ViewBag.OrderLastModified.ModifiedAt</b><br /> by user <b>@ViewBag.OrderLastModified.ModifiedBy.UserName</b></p>
         }
@@ -50,7 +50,7 @@
         </form>
 
         <p class="small text-muted">@ViewBag.UserRecordCount record(s)</p>
-        @if (ViewBag.UserLastModified != null)
+        @if (ViewBag.UserLastModified != null && ViewBag.UserLastModified.ModifiedBy != null)
         {
             <p class="small text-muted">Last modified <b>@ViewBag.UserLastModified.ModifiedAt</b><br /> by user <b>@ViewBag.UserLastModified.ModifiedBy.UserName</b></p>
         }

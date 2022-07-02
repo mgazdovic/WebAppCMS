@@ -17,7 +17,7 @@
 
             <div class="form-group">
                 <label class="control-label">Select Product</label>
-                <select name="ProductId" class="form-control">
+                <select asp-for="ProductId" class="form-control">
                     @foreach (var item in (List<SelectListItem>)ViewBag.Products)
                     {
                         <option value="@item.Value">@item.Text</option>
