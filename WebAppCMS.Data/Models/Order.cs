@@ -72,11 +72,13 @@ namespace WebAppCMS.Data.Models
 
         /// <summary>
         /// Calculates the total considering ItemsTotal, DeliveryFee, Discount (%) and Tax (%). 
+        /// Returns 0 if order does not contain any products. 
         /// </summary>
         /// <returns></returns>
         public decimal GetTotal()
         {
-            return GetTotalWithDelivery() - GetDiscountAbsolute() + GetTaxAbsolute();
+            if(OrderItems.Count > 0) return GetTotalWithDelivery() - GetDiscountAbsolute() + GetTaxAbsolute();
+            else return 0;
         }
 
         public decimal GetItemsTotal()
