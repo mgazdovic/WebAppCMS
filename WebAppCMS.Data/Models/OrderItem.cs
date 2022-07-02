@@ -12,6 +12,7 @@ namespace WebAppCMS.Data.Models
     {
         public int Id { get; set; }
         public int OrderId { get; set; }
+        [Required]
         public int ProductId { get; set; }
 
         [NotMapped]
