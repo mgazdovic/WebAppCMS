@@ -24,7 +24,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         // GET: Admin/Category
-        public async Task<IActionResult> Index(string? filter, int? page, int? perPage)
+        public async Task<IActionResult> Index(string filter, int? page, int? perPage)
         {
             int pageInput = 1;
             if (page.HasValue)
@@ -40,17 +40,17 @@ namespace WebAppCMS.Areas.Admin.Controllers
             }
             ViewBag.filter = filter;
 
-            int perPageInput = 10;
+            int perPageInput = 1000;
             if (perPage.HasValue && perPage > 0)
             {
                 perPageInput = perPage.Value;
             }
-            ViewBag.perPage = perPageInput;
+            ViewBag.perPage = perPage;
 
             var records = await _repo.CategoryQueryFilterAsync(filterInput, perPageInput, pageInput, false);
             if(records != null)
             {
-                var allRecords = await _repo.CategoryQueryFilterAsync(filterInput, -1, -1, false);
+                var allRecords = await _repo.CategoryQueryFilterAsync(filterInput, 0, 0, false);
                 if (allRecords != null)
                 {
                     int recordCount = allRecords.Count;

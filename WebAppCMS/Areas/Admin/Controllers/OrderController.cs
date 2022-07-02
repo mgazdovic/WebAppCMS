@@ -25,11 +25,48 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         // GET: Admin/Order
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string filter, int? page, int? perPage)
         {
-            var orders = await _repo.GetAllOrdersAsync();
+            int pageInput = 1;
+            if (page.HasValue)
+            {
+                pageInput = page.Value;
+            }
+            ViewBag.page = pageInput;
 
-            return View(orders);
+            string filterInput = "";
+            if (!String.IsNullOrEmpty(filter))
+            {
+                filterInput = filter;
+            }
+            ViewBag.filter = filter;
+
+            int perPageInput = 1000;
+            if (perPage.HasValue && perPage > 0)
+            {
+                perPageInput = perPage.Value;
+            }
+            ViewBag.perPage = perPage;
+
+            var records = await _repo.OrderQueryFilterAsync(filterInput, perPageInput, pageInput, false);
+            if (records != null)
+            {
+                var allRecords = await _repo.OrderQueryFilterAsync(filterInput, 0, 0, false);
+                if (allRecords != null)
+                {
+                    int recordCount = allRecords.Count;
+
+                    int totalPageCount = recordCount / perPageInput;
+                    if (recordCount % perPageInput > 0)
+                    {
+                        totalPageCount++;
+                    }
+
+                    ViewBag.totalPageCount = totalPageCount;
+                }
+            }
+
+            return View(records);
         }
 
         // GET: Admin/Order/Details/5

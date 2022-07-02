@@ -71,7 +71,7 @@ namespace WebAppCMS.Data.Repositories
         /// <summary>
         /// Query is based on Name field.
         /// </summary>
-        public async Task<List<Category>> CategoryQueryFilterAsync(string filter, int recordsPerPage = 25, int recordsForPageNo = 1, bool orderByDesc = false)
+        public async Task<List<Category>> CategoryQueryFilterAsync(string filter, int recordsPerPage, int recordsForPageNo, bool orderByDesc)
         {
             var records = await GetAllCategoriesAsync();
 
@@ -211,11 +211,19 @@ namespace WebAppCMS.Data.Repositories
         /// <summary>
         /// Query is based on Name field. 
         /// </summary>
-        public async Task<List<Product>> ProductQueryFilterAsync(string filter, int recordsPerPage = 25, int recordsForPageNo = 1, bool orderByDesc = false)
+        public async Task<List<Product>> ProductQueryFilterAsync(string filter, int? categoryId, int recordsPerPage, int recordsForPageNo, bool orderByDesc)
         {
             var records = await GetAllProductsAsync();
 
-            // Filter
+            // Filter By Category
+            if (categoryId.HasValue)
+            {
+                records = records
+                    .Where(r => r.CategoryId == categoryId.Value)
+                    .ToList();
+            }
+
+            // Filter By Name
             if (!string.IsNullOrEmpty(filter))
             {
                 records = records
@@ -228,7 +236,7 @@ namespace WebAppCMS.Data.Repositories
             {
                 records = records.Skip((recordsForPageNo - 1) * recordsPerPage).Take(recordsPerPage).ToList();
             }
-
+            
             // Sort
             if (orderByDesc)
             {
@@ -333,7 +341,7 @@ namespace WebAppCMS.Data.Repositories
         /// <summary>
         /// Query is based on UserName field (representing the owner of the order). 
         /// </summary>
-        public async Task<List<Order>> OrderQueryFilterAsync(string filter, int recordsPerPage = 25, int recordsForPageNo = 1, bool orderByDesc = false)
+        public async Task<List<Order>> OrderQueryFilterAsync(string filter, int recordsPerPage, int recordsForPageNo, bool orderByDesc)
         {
             var records = await GetAllOrdersAsync();
 

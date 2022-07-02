@@ -25,17 +25,50 @@ namespace WebAppCMS.Areas.Admin.Controllers
         }
 
         // GET: Admin/Product
-        public async Task<IActionResult> Index(int? categoryId)
+        public async Task<IActionResult> Index(string filter, int? page, int? perPage, int? categoryId)
         {
-            var products = await _repo.GetAllProductsAsync();
-            if (categoryId.HasValue)
+            int pageInput = 1;
+            if (page.HasValue)
             {
-                products = products.Where(p => categoryId == null || p.CategoryId == categoryId).ToList();
+                pageInput = page.Value;
+            }
+            ViewBag.page = pageInput;
+
+            string filterInput = "";
+            if (!String.IsNullOrEmpty(filter))
+            {
+                filterInput = filter;
+            }
+            ViewBag.filter = filter;
+
+            int perPageInput = 1000;
+            if (perPage.HasValue && perPage > 0)
+            {
+                perPageInput = perPage.Value;
+            }
+            ViewBag.perPage = perPage;
+
+            var records = await _repo.ProductQueryFilterAsync(filterInput, categoryId, perPageInput, pageInput, false);
+            if (records != null)
+            {
+                var allRecords = await _repo.ProductQueryFilterAsync(filterInput, categoryId, 0, 0, false);
+                if (allRecords != null)
+                {
+                    int recordCount = allRecords.Count;
+
+                    int totalPageCount = recordCount / perPageInput;
+                    if (recordCount % perPageInput > 0)
+                    {
+                        totalPageCount++;
+                    }
+
+                    ViewBag.totalPageCount = totalPageCount;
+                }
             }
 
             ViewBag.CategoryId = categoryId;
             ViewBag.Categories = await GetCategorySelectList();
-            return View(products);
+            return View(records);
         }
 
         // GET: Admin/Product/Create

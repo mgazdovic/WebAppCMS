@@ -43,7 +43,7 @@ namespace WebAppCMS.Data.Interfaces
 
         Task DeleteProductAsync(int id);
 
-        Task<List<Product>> ProductQueryFilterAsync(string filter, int recordsPerPage, int recordsForPageNo, bool orderByDesc);
+        Task<List<Product>> ProductQueryFilterAsync(string filter, int? categoryId, int recordsPerPage, int recordsForPageNo, bool orderByDesc);
 
         Task<int> GetProductCountAsync();
 

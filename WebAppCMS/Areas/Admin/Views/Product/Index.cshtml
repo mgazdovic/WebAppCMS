@@ -6,68 +6,89 @@
 
 <h1>Product Administration</h1>
 
-<div class="row mb-5">
-    <div class="col-md-2">
-        <div class="dropdown">
-            <button class="btn btn-info dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Category
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                @foreach (var item in ViewBag.Categories)
-                {
-                    <a class="dropdown-item" asp-action="Index" asp-route-categoryId="@item.Value">@item.Text</a>
-                }
-            </div>
-        </div>
-    </div>
-    @if (ViewBag.CategoryId != null)
-    {
-        <div class="col-md-2">
-            <a asp-action="Index" class="btn btn-outline-success">Show All</a>
-        </div>
-    }
-</div>
-
 <hr />
 
 <p>
     <a asp-action="Create" class="btn btn-success">Create New</a>
 </p>
 
+<hr />
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="dropdown">
+            <button class="btn btn-info dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Per Page
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId" asp-route-filter="@ViewBag.filter" asp-route-perPage=10>10</a>
+                <a class="dropdown-item" asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId" asp-route-filter="@ViewBag.filter" asp-route-perPage=25>25</a>
+                <a class="dropdown-item" asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId" asp-route-filter="@ViewBag.filter" asp-route-perPage=50>50</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <form asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId" asp-route-filter=filter method="get">
+            <div class="input-group">
+                <div class="form-outline">
+                    <input type="search" name="filter" class="form-control" value="@ViewBag.filter"/>
+                </div>
+                <input type="submit" class="btn btn-outline-secondary ml-1" value="Search">
+                @if (ViewBag.filter != null || ViewBag.CategoryId != null || ViewBag.totalPageCount > 1)
+                {
+                    <a asp-action="Index" class="btn btn-outline-success ml-1">Show All</a>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+
 @if (Model.Count() == 0)
 {
-    <div class="row text-muted"> --- No records yet...</div>
+    <div class="row text-muted"> --- No records found...</div>
 }
 else
 {
     <table class="table">
         <thead>
             <tr>
-                <th>
+                <th class="align-middle">
                     @Html.DisplayNameFor(model => model.IsAvailable)
                 </th>
-                <th>
+                <th class="align-middle">
                     @Html.DisplayNameFor(model => model.Name)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CategoryName)
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @Html.DisplayNameFor(model => model.CategoryName)
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @foreach (var item in ViewBag.Categories)
+                            {
+                                <a class="dropdown-item" asp-action="Index" asp-route-filter="@ViewBag.filter" asp-route-categoryId="@item.Value">@item.Text</a>
+                            }
+                        </div>
+                    </div>
                 </th>
-                <th>
+                <th class="align-middle">
                     @Html.DisplayNameFor(model => model.Description)
                 </th>
-                <th>
+                <th class="align-middle">
                     @Html.DisplayNameFor(model => model.UnitPrice)
                 </th>
-                
+
                 <th></th>
 
-                <th class="small text-muted align-middle">
+                <th class="align-middle small text-muted">
                     @Html.DisplayNameFor(model => model.CreatedAt)
                 </th>
-                <th class="small text-muted align-middle">
+                <th class="align-middle small text-muted">
                     @Html.DisplayNameFor(model => model.ModifiedAt)
                 </th>
-                <th class="small text-muted align-middle">
+                <th class="align-middle small text-muted">
                     @Html.DisplayNameFor(model => model.ModifiedBy)
                 </th>
             </tr>
@@ -75,39 +96,55 @@ else
         <tbody>
             @foreach (var item in Model)
             {
+                <tr>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.IsAvailable)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CategoryName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnitPrice)
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+
+                    <td class="small text-muted align-middle">
+                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                    </td>
+                    <td class="small text-muted align-middle">
+                        @Html.DisplayFor(modelItem => item.ModifiedAt)
+                    </td>
+                    <td class="small text-muted align-middle">
+                        @Html.DisplayFor(modelItem => item.ModifiedBy.UserName)
+                    </td>
+                </tr>
+            }
             <tr>
-                <td class="text-center">
-                    @Html.DisplayFor(modelItem => item.IsAvailable)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CategoryName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UnitPrice)
-                </td>
-
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-
-                <td class="small text-muted align-middle">
-                    @Html.DisplayFor(modelItem => item.CreatedAt)
-                </td>
-                <td class="small text-muted align-middle">
-                    @Html.DisplayFor(modelItem => item.ModifiedAt)
-                </td>
-                <td class="small text-muted align-middle">
-                    @Html.DisplayFor(modelItem => item.ModifiedBy.UserName)
+                <td colspan="9" class="text-muted">Page @ViewBag.page / @ViewBag.totalPageCount</td>
+            </tr>
+            <tr>
+                <td colspan="9">
+                    @if (ViewBag.page > 1)
+                    {
+                        <a asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId" asp-route-filter="@ViewBag.filter" asp-route-perPage="@ViewBag.perPage" asp-route-page="@(ViewBag.page - 1)">Previous Page</a>
+                        <span> | </span>
+                    }
+                    @if (ViewBag.page < ViewBag.totalPageCount)
+                    {
+                        <a asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId" asp-route-filter="@ViewBag.filter" asp-route-perPage="@ViewBag.perPage" asp-route-page="@(ViewBag.page + 1)">Next Page</a>
+                    }
                 </td>
             </tr>
-            }
         </tbody>
     </table>
 }
