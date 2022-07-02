@@ -7,10 +7,23 @@
 <h1>Edit</h1>
 <h4>User</h4>
 
+<hr />
+
 @if (!String.IsNullOrEmpty(Model.AvatarAsBase64String))
 {
+    <img src="data:image/*;base64,@Model.AvatarAsBase64String" class="rounded-circle shadow-4" style="width: 200px;" alt="Avatar" />
     <hr />
-    <img style="width:200px;height:200px" src="data:image/*;base64,@Model.AvatarAsBase64String" />
+    <form asp-action="RemoveAvatar" asp-route-id="@Model.Id">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <input type="submit" value="Remove Image" class="btn btn-outline-warning" />
+        </div>
+    </form>
+}
+else
+{
+    <img src="~/User/default_avatar.jpg" class="rounded-circle shadow-4" style="width: 200px;" alt="Avatar" />
 }
 
 <hr />
@@ -29,12 +42,12 @@
 
             <div class="form-group">
                 <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" placeholder="Enter User Name"/>
+                <input asp-for="UserName" class="form-control" placeholder="Enter User Name" />
             </div>
 
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" placeholder="Enter E-mail"/>
+                <input asp-for="Email" class="form-control" placeholder="Enter E-mail" />
             </div>
 
             <hr />

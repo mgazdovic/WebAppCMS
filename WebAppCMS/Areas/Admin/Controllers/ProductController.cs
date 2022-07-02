@@ -186,6 +186,30 @@ namespace WebAppCMS.Areas.Admin.Controllers
             return View(product);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveImage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            int productId = id.Value;
+
+            var product = await _repo.GetProductByIdAsync(productId);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            product.Image = null;
+            await _repo.UpdateProductAsync(product);
+
+            return RedirectToAction(nameof(Edit), new { id = id });
+        }
+
         // GET: Admin/Product/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

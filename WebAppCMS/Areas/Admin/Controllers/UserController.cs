@@ -154,6 +154,28 @@ namespace WebAppCMS.Areas.Admin.Controllers
             return View(appUserViewModel);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveAvatar(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = _userManager.Users.FirstOrDefault(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.Avatar = null;
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction(nameof(EditDetails), new { id = id });
+        }
+
         public async Task<IActionResult> ChangePassword(string id) 
         {
             var user = await _userManager.FindByIdAsync(id);
