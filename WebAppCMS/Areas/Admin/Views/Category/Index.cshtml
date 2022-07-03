@@ -21,6 +21,7 @@
                 Per Page
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" asp-action="Index" asp-route-filter="@ViewBag.filter" asp-route-perPage=5>5</a>
                 <a class="dropdown-item" asp-action="Index" asp-route-filter="@ViewBag.filter" asp-route-perPage=10>10</a>
                 <a class="dropdown-item" asp-action="Index" asp-route-filter="@ViewBag.filter" asp-route-perPage=25>25</a>
                 <a class="dropdown-item" asp-action="Index" asp-route-filter="@ViewBag.filter" asp-route-perPage=50>50</a>
