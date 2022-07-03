@@ -1,8 +1,104 @@
-﻿@{
+﻿@model IEnumerable<Product>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2>Browse Available Products</h2>
+
+<hr />
+
+<div class="row mb-1">
+    <div class="col-md-2">
+        <div class="dropdown">
+            <button class="btn btn-info dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Category
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                @foreach (var item in ViewBag.Categories)
+                {
+                    <a class="dropdown-item" asp-action="Index" asp-route-categoryId="@item.Value" asp-route-filter="@ViewBag.filter">@item.Text</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <form asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId" asp-route-filter=filter method="get">
+            <div class="input-group">
+                <div class="form-outline">
+                    <input type="search" name="filter" class="form-control" value="@ViewBag.filter" />
+                </div>
+                <input type="submit" class="btn btn-outline-secondary ml-1" value="Search">
+                @if (ViewBag.filter != null || ViewBag.CategoryId != null)
+                {
+                    <a asp-action="Index" class="btn btn-outline-success ml-1">Show All</a>
+                }
+                <span class="text-muted small ml-2">Currently showing @Model.Count() out of @ViewBag.totalCount total records</span>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (!String.IsNullOrEmpty(@ViewBag.CategoryName))
+{ 
+    <p class="text-muted small">
+        Selected Category: @ViewBag.CategoryName
+    </p>
+}
+
+<hr />
+
+@if (Model.Count() == 0)
+{
+    <div class="row text-muted"> --- There are no available products at this moment...</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mt-lg-4">
+                    <div class="card-header">
+                        <h2>@item.Name</h2>
+                    </div>
+
+                    <div class="card-body">
+                        @item.CategoryName
+                        <hr />
+                        @if (String.IsNullOrEmpty(item.Description))
+                        {
+                            <span class="text-muted small">No description available</span>
+                        }
+                        else
+                        {
+                            <span>@item.Description</span>
+                        }
+                        <hr />
+                        <div class="d-flex justify-content-center">
+                            @if (item.Image != null && !String.IsNullOrEmpty(item.GetImageAsBase64String()))
+                            {
+                                <img src="data:image/*;base64,@item.GetImageAsBase64String()" class="rounded-circle shadow-4" style="width: 200px; height:200px;" alt="Image" />
+                            }
+                            else
+                            {
+                                <img src="~/User/default_product.png" class="rounded-circle shadow-4" style="width: 200px; height: 200px;" alt="Image" />
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-center">
+                        <a href="mailto:mislav.gazdovic@gmail.com?subject=Order%20Request" class="btn btn-success">Order Product</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<hr />
+<hr />
+<hr />
+
+<div class="row d-flex justify-content-center">
+    <a href="mailto:mislav.gazdovic@gmail.com?subject=Contact&Body=Hello" class="btn btn-primary">CONTACT US</a>
 </div>
