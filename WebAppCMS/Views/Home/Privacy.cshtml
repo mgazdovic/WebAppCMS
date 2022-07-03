@@ -1,6 +1,29 @@
-﻿@{
+﻿@inject SignInManager<AppUser> SignInManager
+
+@{
     ViewData["Title"] = "Privacy Policy";
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<hr />
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <p>
+        Your account contains <b>personal data</b> that you have given us.
+        GDPR guidelines are strictly followed.
+        See more details <a href="/Identity/Account/Manage/PersonalData">here</a>.
+    </p>
+}
+else
+{
+    <span>Please login to see privacy policy | <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Login">Login</a></span>
+}
+
+<hr />
+<hr />
+<hr />
+
+<div class="row d-flex justify-content-center">
+    <a href="mailto:mislav.gazdovic@gmail.com?subject=Contact&Body=Hello" class="btn btn-primary">CONTACT US</a>
+</div>
