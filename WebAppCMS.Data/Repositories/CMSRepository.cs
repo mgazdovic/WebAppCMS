@@ -339,7 +339,7 @@ namespace WebAppCMS.Data.Repositories
         }
 
         /// <summary>
-        /// Query is based on UserName field (representing the owner of the order). 
+        /// Query is based on UserName field (representing the owner of the order) or State field (enum text). 
         /// </summary>
         public async Task<List<Order>> OrderQueryFilterAsync(string filter, int recordsPerPage, int recordsForPageNo, bool orderByDesc)
         {
@@ -349,7 +349,8 @@ namespace WebAppCMS.Data.Repositories
             if (!string.IsNullOrEmpty(filter))
             {
                 records = records
-                    .Where(r => r.UserName.Contains(filter, StringComparison.CurrentCultureIgnoreCase))
+                    .Where(r => r.UserName.Contains(filter, StringComparison.CurrentCultureIgnoreCase)
+                    || r.State.ToString().Contains(filter, StringComparison.CurrentCultureIgnoreCase))
                     .ToList();
             }
 
