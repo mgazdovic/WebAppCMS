@@ -11,7 +11,7 @@
 
 @if (!String.IsNullOrEmpty(Model.AvatarAsBase64String))
 {
-    <img src="data:image/*;base64,@Model.AvatarAsBase64String" class="rounded-circle shadow-4" style="width: 200px;" alt="Avatar" />
+    <img src="data:image/*;base64,@Model.AvatarAsBase64String" class="rounded-circle shadow-4" style="width: 200px; height: 200px;" alt="Avatar" />
     <hr />
     <form asp-action="RemoveAvatar" asp-route-id="@Model.Id">
         @Html.AntiForgeryToken()
@@ -23,7 +23,7 @@
 }
 else
 {
-    <img src="~/User/default_avatar.jpg" class="rounded-circle shadow-4" style="width: 200px;" alt="Avatar" />
+    <img src="~/User/default_avatar.jpg" class="rounded-circle shadow-4" style="width: 200px; height: 200px;" alt="Avatar" />
 }
 
 <hr />
