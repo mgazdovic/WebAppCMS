@@ -68,6 +68,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
 
             ViewBag.CategoryId = categoryId;
             ViewBag.Categories = await GetCategorySelectList();
+            ViewBag.totalCount = await _repo.GetProductCountAsync();
             return View(records);
         }
 

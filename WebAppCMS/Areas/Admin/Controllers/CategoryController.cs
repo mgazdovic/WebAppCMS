@@ -65,6 +65,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 }
             }
 
+            ViewBag.totalCount = await _repo.GetCategoryCountAsync();
             return View(records);
         }
 

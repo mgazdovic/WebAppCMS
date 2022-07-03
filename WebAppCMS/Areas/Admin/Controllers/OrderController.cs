@@ -66,6 +66,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
                 }
             }
 
+            ViewBag.totalCount = await _repo.GetOrderCountAsync();
             return View(records.OrderBy(o => o.Id));
         }
 

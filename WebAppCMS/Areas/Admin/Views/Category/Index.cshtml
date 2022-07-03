@@ -31,13 +31,14 @@
         <form asp-action="Index" asp-route-filter=filter method="get">
             <div class="input-group">
                 <div class="form-outline">
-                    <input type="search" name="filter" class="form-control" value="@ViewBag.filter"/>
+                    <input type="search" name="filter" class="form-control" value="@ViewBag.filter" />
                 </div>
                 <input type="submit" class="btn btn-outline-secondary ml-1" value="Search">
                 @if (ViewBag.filter != null || ViewBag.totalPageCount > 1)
                 {
                     <a asp-action="Index" class="btn btn-outline-success ml-1">Show All</a>
                 }
+                <span class="text-muted small ml-2">Currently showing @Model.Count() out of @ViewBag.totalCount total records</span>
             </div>
         </form>
     </div>
