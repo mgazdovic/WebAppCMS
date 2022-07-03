@@ -38,11 +38,10 @@ namespace WebAppCMS.Controllers
                 ViewBag.CategoryName = category.Name;
             }
 
-            var products = await _repo.ProductQueryFilterAsync(filterInput, categoryId, 0, 0, false);
+            var products = await _repo.ProductQueryFilterAsync(filterInput, categoryId, 10, 1, false);
             var availableProducts = products.Where(p => p.IsAvailable);
 
             ViewBag.Categories = await GetCategorySelectList();
-            ViewBag.totalCount = await _repo.GetProductCountAsync();
             return View(availableProducts);
         }
 

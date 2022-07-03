@@ -31,9 +31,9 @@
                 <input type="submit" class="btn btn-outline-secondary ml-1" value="Search">
                 @if (ViewBag.filter != null || ViewBag.CategoryId != null)
                 {
-                    <a asp-action="Index" class="btn btn-outline-success ml-1">Show All</a>
+                    <a asp-action="Index" class="btn btn-outline-success ml-1">Refresh</a>
                 }
-                <span class="text-muted small ml-2">Currently showing @Model.Count() out of @ViewBag.totalCount total records</span>
+                <span class="text-muted small ml-2">Currently showing @Model.Count() record(s)</span>
             </div>
         </form>
     </div>
