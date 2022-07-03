@@ -10,8 +10,8 @@ using WebAppCMS.Data;
 namespace WebAppCMS.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220702180129_InsertTestData")]
-    partial class InsertTestData
+    [Migration("20220703134440_InsertInitialAppUsers")]
+    partial class InsertInitialAppUsers
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
