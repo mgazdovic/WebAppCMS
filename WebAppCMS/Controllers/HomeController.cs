@@ -45,6 +45,25 @@ namespace WebAppCMS.Controllers
             return View(availableProducts);
         }
 
+        // GET: /Home/ProductDetails/5
+        public async Task<IActionResult> ProductDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var productId = id.Value;
+
+            var product = await _repo.GetProductByIdAsync(productId);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
         public IActionResult Privacy()
         {
             return View();

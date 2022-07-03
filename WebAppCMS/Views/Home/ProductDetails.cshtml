@@ -1,0 +1,59 @@
+﻿@model Product
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>@Model.Name</h1>
+
+<hr />
+
+@if (Model.Image != null && !String.IsNullOrEmpty(@Model.GetImageAsBase64String()))
+{
+    <img src="data:image/*;base64,@Model.GetImageAsBase64String()" class="rounded-circle shadow-4" style="width: 200px; height:200px;" alt="Avatar" />
+}
+else
+{
+    <img src="~/User/default_product.png" class="rounded-circle shadow-4" style="width: 200px; height: 200px;" alt="Avatar" />
+}
+
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsAvailable)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IsAvailable)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CategoryName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CategoryName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UnitPrice)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UnitPrice)
+        </dd>
+
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to Home</a>
+</div>
