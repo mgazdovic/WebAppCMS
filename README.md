@@ -16,6 +16,7 @@
    - Microsoft.EntityFrameworkCore.SqlServer (5.0.17)
    - Microsoft.EntityFrameworkCore.Tools (5.0.17)
    - Microsoft.VisualStudio.Web.CodeGeneration.Design (5.0.2)
+   - Swashbuckle.AspNetCore (5.6.3)
 
  - <b>SQL Server 2016</b> (or newer)
    - The initial ConnectionString settings are set up assuming a locally running SQL Server instance (localdb)\mssqllocaldb (login using Windows Authentication). 
@@ -27,7 +28,7 @@
      
 ### Steps
  1. Create a local copy of the repository (Visual Studio)
- 2. Set up "Default Startup Project" to <b>WebAppCMS</b>
+ 2. Configure "Set as Startup Project" for <b>WebAppCMS</b>
  3. Open Package Manager Console
  4. Set up "Default project" within Package Manager Console to <b>WebAppCMS.Data</b>
  5. Within Package Manager Console, execute the Update-Database command: 
@@ -45,3 +46,5 @@
     - <b>Supervisor</b> role, has Administration access but cannot configure App Users
   - User Name: client@client.com | Password: Pass123! 
     - <b>Client</b> role, does not have Administration access
+    
+###### Swagger can be used to test exposed endpoints by configuring "Set as Startup Project" for <b>WebAppCMS.Api</b>. 
