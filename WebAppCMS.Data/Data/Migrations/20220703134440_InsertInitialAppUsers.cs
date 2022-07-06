@@ -38,8 +38,8 @@ namespace WebAppCMS.Data.Migrations
             sb.AppendLine(", 'ADMIN@ADMIN.COM'");
             sb.AppendLine($", '{passwordHash}'");
             sb.AppendLine(", ''");
-            sb.AppendLine($", '{DateTime.Now}'");
-            sb.AppendLine($", '{DateTime.Now}'");
+            sb.AppendLine($", GETDATE()");
+            sb.AppendLine($", GETDATE()");
             sb.AppendLine($", '{_adminUserGuid}'");
             sb.AppendLine(")");
 
@@ -67,8 +67,8 @@ namespace WebAppCMS.Data.Migrations
             sb.AppendLine(", 'SUPERVISOR@SUPERVISOR.COM'");
             sb.AppendLine($", '{passwordHash}'");
             sb.AppendLine(", ''");
-            sb.AppendLine($", '{DateTime.Now}'");
-            sb.AppendLine($", '{DateTime.Now}'");
+            sb.AppendLine($", GETDATE()");
+            sb.AppendLine($", GETDATE()");
             sb.AppendLine($", '{_adminUserGuid}'");
             sb.AppendLine(")");
             migrationBuilder.Sql(sb.ToString());
@@ -89,8 +89,8 @@ namespace WebAppCMS.Data.Migrations
             sb.AppendLine(", 'CLIENT@CLIENT.COM'");
             sb.AppendLine($", '{passwordHash}'");
             sb.AppendLine(", ''");
-            sb.AppendLine($", '{DateTime.Now}'");
-            sb.AppendLine($", '{DateTime.Now}'");
+            sb.AppendLine($", GETDATE()");
+            sb.AppendLine($", GETDATE()");
             sb.AppendLine($", '{_adminUserGuid}'");
             sb.AppendLine(")");
 

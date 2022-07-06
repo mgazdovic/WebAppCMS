@@ -42,72 +42,72 @@ namespace WebAppCMS.Data.Migrations
 
             sb.AppendLine("INSERT INTO Category");
             sb.AppendLine("(Name, CreatedAt, ModifiedAt, ModifiedById)");
-            sb.AppendLine($"VALUES(N'Electronics', '{DateTime.Now}', '{DateTime.Now}', @UserId_SUPERVISOR);");
+            sb.AppendLine($"VALUES(N'Electronics', GETDATE(), GETDATE(), @UserId_SUPERVISOR);");
 
             sb.AppendLine("INSERT INTO Category");
             sb.AppendLine("(Name, CreatedAt, ModifiedAt, ModifiedById)");
-            sb.AppendLine($"VALUES(N'Food', '{DateTime.Now}', '{DateTime.Now}', @UserId_SUPERVISOR);");
+            sb.AppendLine($"VALUES(N'Food', GETDATE(), GETDATE(), @UserId_SUPERVISOR);");
 
             sb.AppendLine("SET @CategoryId = SCOPE_IDENTITY();");
 
             sb.AppendLine("INSERT INTO Product");
             sb.AppendLine("(CategoryId, Name, Description, UnitPrice, CreatedAt, ModifiedAt, ModifiedById, IsAvailable, Image)");
-            sb.AppendLine($"VALUES(@CategoryId, N'Apple', N'A very nice round fruit.', 5, '{DateTime.Now}', '{DateTime.Now}', @UserId_ADMIN, 1, NULL);");
+            sb.AppendLine($"VALUES(@CategoryId, N'Apple', N'A very nice round fruit.', 5, GETDATE(), GETDATE(), @UserId_ADMIN, 1, NULL);");
 
             sb.AppendLine("INSERT INTO Product");
             sb.AppendLine("(CategoryId, Name, Description, UnitPrice, CreatedAt, ModifiedAt, ModifiedById, IsAvailable, Image)");
-            sb.AppendLine($"VALUES(@CategoryId, N'Banana', N'A very nice yellow fruit.', 6, '{DateTime.Now}', '{DateTime.Now}', @UserId_ADMIN, 1, NULL);");
+            sb.AppendLine($"VALUES(@CategoryId, N'Banana', N'A very nice yellow fruit.', 6, GETDATE(), GETDATE(), @UserId_ADMIN, 1, NULL);");
 
             sb.AppendLine("INSERT INTO Product");
             sb.AppendLine("(CategoryId, Name, Description, UnitPrice, CreatedAt, ModifiedAt, ModifiedById, IsAvailable, Image)");
-            sb.AppendLine($"VALUES(@CategoryId, N'Kiwi', N'A very nice exotic fruit.', 12, '{DateTime.Now}', '{DateTime.Now}', @UserId_ADMIN, 1, NULL);");
+            sb.AppendLine($"VALUES(@CategoryId, N'Kiwi', N'A very nice exotic fruit.', 12, GETDATE(), GETDATE(), @UserId_ADMIN, 1, NULL);");
 
             sb.AppendLine("INSERT INTO Category");
             sb.AppendLine("(Name, CreatedAt, ModifiedAt, ModifiedById)");
-            sb.AppendLine($"VALUES(N'Drink', '{DateTime.Now}', '{DateTime.Now}', @UserId_SUPERVISOR);");
+            sb.AppendLine($"VALUES(N'Drink', GETDATE(), GETDATE(), @UserId_SUPERVISOR);");
 
             sb.AppendLine("SET @CategoryId = SCOPE_IDENTITY();");
 
             sb.AppendLine("INSERT INTO Product");
             sb.AppendLine("(CategoryId, Name, Description, UnitPrice, CreatedAt, ModifiedAt, ModifiedById, IsAvailable, Image)");
-            sb.AppendLine($"VALUES(@CategoryId, N'Water', N'The healthiest liquid.', 8, '{DateTime.Now}', '{DateTime.Now}', @UserId_ADMIN, 1, NULL);");
+            sb.AppendLine($"VALUES(@CategoryId, N'Water', N'The healthiest liquid.', 8, GETDATE(), GETDATE(), @UserId_ADMIN, 1, NULL);");
 
             sb.AppendLine("INSERT INTO Product");
             sb.AppendLine("(CategoryId, Name, Description, UnitPrice, CreatedAt, ModifiedAt, ModifiedById, IsAvailable, Image)");
-            sb.AppendLine($"VALUES(@CategoryId, N'Soda', N'', 8, '{DateTime.Now}', '{DateTime.Now}', @UserId_ADMIN, 1, NULL);");
+            sb.AppendLine($"VALUES(@CategoryId, N'Soda', N'-', 8, GETDATE(), GETDATE(), @UserId_ADMIN, 1, NULL);");
 
             sb.AppendLine("INSERT INTO Product");
             sb.AppendLine("(CategoryId, Name, Description, UnitPrice, CreatedAt, ModifiedAt, ModifiedById, IsAvailable, Image)");
-            sb.AppendLine($"VALUES(@CategoryId, N'Coca Cola', N'Too much sugar?', 8, '{DateTime.Now}', '{DateTime.Now}', @UserId_ADMIN, 1, NULL);");
+            sb.AppendLine($"VALUES(@CategoryId, N'Coca Cola', N'Too much sugar?', 8, GETDATE(), GETDATE(), @UserId_ADMIN, 1, NULL);");
 
             sb.AppendLine("INSERT INTO Product");
             sb.AppendLine("(CategoryId, Name, Description, UnitPrice, CreatedAt, ModifiedAt, ModifiedById, IsAvailable, Image)");
-            sb.AppendLine($"VALUES(@CategoryId, N'Beer', N'Good for mood ;)', 9, '{DateTime.Now}', '{DateTime.Now}', @UserId_ADMIN, 1, NULL);");
+            sb.AppendLine($"VALUES(@CategoryId, N'Beer', N'Good for mood ;)', 9, GETDATE(), GETDATE(), @UserId_ADMIN, 1, NULL);");
 
             sb.AppendLine("INSERT INTO Product");
             sb.AppendLine("(CategoryId, Name, Description, UnitPrice, CreatedAt, ModifiedAt, ModifiedById, IsAvailable, Image)");
-            sb.AppendLine($"VALUES(@CategoryId, N'Loza', N'Basically C2H5OH (!)', 90, '{DateTime.Now}', '{DateTime.Now}', @UserId_ADMIN, 1, NULL);");
+            sb.AppendLine($"VALUES(@CategoryId, N'Loza', N'Basically C2H5OH (!)', 90, GETDATE(), GETDATE(), @UserId_ADMIN, 1, NULL);");
 
             // Order & OrderItem
             sb.AppendLine("DECLARE @ProductId INT = SCOPE_IDENTITY();");
 
             sb.AppendLine("INSERT INTO [Order]");
             sb.AppendLine("(UserId, State, PercentDiscount, PercentTax, DeliveryFee, DeliveryFirstName, DeliveryLastName, DeliveryFullAddress, Message, CreatedAt, ModifiedAt, ModifiedById)");
-            sb.AppendLine($"VALUES(@UserId_CLIENT, 0, 0, 0, 0, N'Miki', N'Milan', N'Ilica 223, Zagreb, Croatia', N'', '{DateTime.Now}', '{DateTime.Now}', @UserId_SUPERVISOR);");
+            sb.AppendLine($"VALUES(@UserId_CLIENT, 0, 0, 0, 0, N'Miki', N'Milan', N'Ilica 223, Zagreb, Croatia', N'', GETDATE(), GETDATE(), @UserId_SUPERVISOR);");
 
             sb.AppendLine("INSERT INTO [Order]");
             sb.AppendLine("(UserId, State, PercentDiscount, PercentTax, DeliveryFee, DeliveryFirstName, DeliveryLastName, DeliveryFullAddress, Message, CreatedAt, ModifiedAt, ModifiedById)");
-            sb.AppendLine($"VALUES(@UserId_CLIENT, 1, 0, 24, 20, N'Joža', N'Volispit', N'Međimurska 17a, Zagorje, Croatia', N'Nek dojde kam prije jer bum crknul bez pijače', '{DateTime.Now}', '{DateTime.Now}', @UserId_SUPERVISOR);");
+            sb.AppendLine($"VALUES(@UserId_CLIENT, 1, 0, 24, 20, N'Joža', N'Volispit', N'Međimurska 17a, Zagorje, Croatia', N'Nek dojde kam prije jer bum crknul bez pijače', GETDATE(), GETDATE(), @UserId_SUPERVISOR);");
 
             sb.AppendLine("DECLARE @OrderId INT = SCOPE_IDENTITY();");
 
             sb.AppendLine("INSERT INTO OrderItem");
             sb.AppendLine("(OrderId, ProductId, Quantity, CreatedAt, ModifiedAt, ModifiedById)");
-            sb.AppendLine($"VALUES(@OrderId, @ProductId, 2, '{DateTime.Now}', '{DateTime.Now}', @UserId_SUPERVISOR);");
+            sb.AppendLine($"VALUES(@OrderId, @ProductId, 2, GETDATE(), GETDATE(), @UserId_SUPERVISOR);");
 
             sb.AppendLine("INSERT INTO [Order]");
             sb.AppendLine("(UserId, State, PercentDiscount, PercentTax, DeliveryFee, DeliveryFirstName, DeliveryLastName, DeliveryFullAddress, Message, CreatedAt, ModifiedAt, ModifiedById)");
-            sb.AppendLine($"VALUES(@UserId_CLIENT, -1, 0, 0, 0, N'Ante', N'Fulanovic', N'Somewhere in the galaxy far, far away...', N'', '{DateTime.Now.AddDays(-1)}', '{DateTime.Now}', @UserId_SUPERVISOR);");
+            sb.AppendLine($"VALUES(@UserId_CLIENT, -1, 0, 0, 0, N'Ante', N'Fulanovic', N'Somewhere in the galaxy far, far away...', N'', GETDATE(), GETDATE(), @UserId_SUPERVISOR);");
 
             // Execute
             migrationBuilder.Sql(sb.ToString());
