@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppCMS.Data;
@@ -62,6 +64,8 @@ namespace WebAppCMS
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            AddLocalizationSettings(app, defaultCulture: "en-US", decimalSeparator: '.');
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -78,6 +82,26 @@ namespace WebAppCMS
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+            });
+        }
+
+        private void AddLocalizationSettings(IApplicationBuilder app, string defaultCulture, char decimalSeparator)
+        {
+            var ci = new CultureInfo(defaultCulture);
+            ci.NumberFormat.NumberDecimalSeparator = decimalSeparator.ToString();
+            ci.NumberFormat.CurrencyDecimalSeparator = decimalSeparator.ToString();
+
+            app.UseRequestLocalization(new RequestLocalizationOptions()
+            {
+                DefaultRequestCulture = new RequestCulture(ci),
+                SupportedCultures = new List<CultureInfo>()
+                {
+                    ci
+                },
+                SupportedUICultures = new List<CultureInfo>()
+                {
+                    ci
+                }
             });
         }
     }
