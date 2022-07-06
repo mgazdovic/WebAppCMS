@@ -355,7 +355,7 @@ namespace WebAppCMS.Areas.Admin.Controllers
             var orderItem = await _repo.GetOrderItemByIdAsync(id);
             var newQuantity = orderItem.Quantity - 1;
 
-            if (newQuantity == 0)
+            if (newQuantity <= 0)
             {
                 return RedirectToAction(nameof(DeleteItem), new { id = orderItem.Id });
             }
